@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Padlet / Miro: Мой день в Брянске | Урок 7 РКИ (БГТУ)</title>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #0f172a;
+      background-image: 
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1.5px, transparent 0);
+      background-size: 28px 28px;
+    }
+    .font-handwriting {
+      font-family: 'Caveat', cursive;
+    }
+    /* Sticky note / Padlet card pin effect */
+    .pin-shadow {
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.2);
+    }
+    .tape {
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 22px;
+      background: rgba(255, 255, 255, 0.45);
+      border-radius: 2px;
+      backdrop-filter: blur(2px);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      z-index: 10;
+    }
+    /* Card shake on error */
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-8px); }
+      40%, 80% { transform: translateX(8px); }
+    }
+    .animate-shake {
+      animation: shake 0.4s ease-in-out;
+    }
+    /* Gentle pulse for selected card */
+    @keyframes select-pulse {
+      0%, 100% { box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.8), 0 15px 30px rgba(0,0,0,0.3); }
+      50% { box-shadow: 0 0 0 8px rgba(96, 165, 250, 0.5), 0 15px 30px rgba(0,0,0,0.3); }
+    }
+    .card-selected {
+      animation: select-pulse 1.8s infinite;
+      transform: translateY(-4px) scale(1.015);
+    }
+    /* Canvas connection line styling */
+    #connection-layer {
+      pointer-events: none;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 20;
+    }
+  </style>
+</head>
+<body class="text-slate-100 min-h-screen flex flex-col selection:bg-amber-400 selection:text-slate-900 pb-16">
+
+  <!-- Top App Bar / Navigation -->
+  <header class="sticky top-0 z-40 bg-slate-900/90 backdrop-blur-md border-b border-slate-700/80 px-4 lg:px-8 py-3 transition-all">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
+      
+      <!-- Brand & Lesson info -->
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-xl shadow-lg shadow-amber-500/20">
+          📍
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg lg:text-xl font-bold tracking-tight text-white flex items-center gap-2">
+              Мой день в Брянске
+              <span class="text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
+                Урок 7 • РКИ (А1)
+              </span>
+            </h1>
+          </div>
+          <p class="text-xs text-slate-400">
+            БГТУ • Бульвар 50 лет Октября • Бежицкий район | Русский • English • Français
+          </p>
+        </div>
+      </div>
+
+      <!-- Live Game Stats & Controls -->
+      <div class="flex items-center gap-2.5 sm:gap-4 flex-wrap">
+        
+        <!-- Score pill -->
+        <div class="bg-slate-800/90 border border-slate-700 rounded-xl px-3.5 py-1.5 flex items-center gap-2 shadow-inner">
+          <span class="text-amber-400 text-sm">⭐</span>
+          <span class="text-xs font-medium text-slate-300">Собрано:</span>
+          <span id="score-counter" class="text-sm font-extrabold text-amber-300">0 / 8</span>
+        </div>
+
+        <!-- Audio voice speech indicator -->
+        <button id="btn-toggle-sound" onclick="toggleAudio()" class="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" title="Включить/выключить звук эффектов">
+          <span id="sound-icon">🔊</span>
+        </button>
+
+        <!-- Grammar Modal Open Button -->
+        <button onclick="toggleGrammarModal()" class="px-3.5 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold flex items-center gap-1.5 transition">
+          <span>📖</span>
+          <span>Глаголы Урока 7</span>
+        </button>
+
+        <!-- Shuffle / Reset -->
+        <button onclick="resetBoard()" class="px-3.5 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition">
+          <span>🔄</span>
+          <span>Перемешать</span>
+        </button>
+
+        <!-- Reveal / Solution mode -->
+        <button onclick="revealAllPairs()" class="px-3.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-bold shadow-md shadow-emerald-700/30 flex items-center gap-1.5 transition">
+          <span>✨</span>
+          <span>Решение</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Interactive Task Banner -->
+  <div class="max-w-7xl mx-auto w-full px-4 lg:px-8 mt-5 mb-2">
+    <div class="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-indigo-500/10 border border-slate-700/80 rounded-2xl p-4 lg:p-5 flex flex-col md:flex-row items-center justify-between gap-4 backdrop-blur-sm">
+      <div class="flex items-start gap-3">
+        <span class="text-2xl mt-0.5">🎯</span>
+        <div>
+          <div class="font-bold text-slate-100 text-sm md:text-base flex items-center gap-2">
+            Задание: «Собери мой день в Брянске»
+            <span class="text-xs font-normal text-amber-300 bg-amber-500/20 px-2 py-0.5 rounded border border-amber-500/30">Miro / Padlet mode</span>
+          </div>
+          <p class="text-xs text-slate-300 mt-1 leading-relaxed">
+            <strong class="text-amber-300">1.</strong> Нажмите на карточку слева (English / Français). 
+            <strong class="text-sky-300">2.</strong> Затем нажмите на подходящую русскую фразу с фото Брянска справа. 
+            Доска автоматически проведёт соединительную стрелку!
+          </p>
+        </div>
+      </div>
+
+      <!-- Quick status hint badge -->
+      <div id="selection-status" class="w-full md:w-auto text-center px-4 py-2 rounded-xl bg-slate-800/80 border border-slate-700 text-xs font-semibold text-slate-300">
+        👆 Выберите любую карточку из левой колонки
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Board Area -->
+  <main class="max-w-7xl mx-auto w-full px-4 lg:px-8 mt-4 flex-1 relative">
+    
+    <!-- SVG Connections Layer -->
+    <svg id="connection-layer">
+      <defs>
+        <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+          <polygon points="0 0, 8 3, 0 6" fill="#10b981" />
+        </marker>
+      </defs>
+    </svg>
+
+    <!-- 2 Column Sticky-Board Layout -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 relative z-10">
+      
+      <!-- LEFT COLUMN: Time + EN / FR cards -->
+      <div>
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-amber-500/30">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-amber-400"></span>
+            <h2 class="font-bold text-sm lg:text-base text-amber-200 tracking-wide uppercase">
+              1. Время суток & Перевод (EN / FR)
+            </h2>
+          </div>
+          <span class="text-xs text-slate-400 font-handwriting text-lg">Daily routines</span>
+        </div>
+
+        <div id="left-cards-container" class="space-y-4">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+      <!-- RIGHT COLUMN: Russian phrase + Real Bryansk Landmarks -->
+      <div>
+        <div class="flex items-center justify-between mb-4 pb-2 border-b border-sky-500/30">
+          <div class="flex items-center gap-2">
+            <span class="w-3 h-3 rounded-full bg-sky-400"></span>
+            <h2 class="font-bold text-sm lg:text-base text-sky-200 tracking-wide uppercase">
+              2. Русская фраза & Локации Брянска (БГТУ)
+            </h2>
+          </div>
+          <span class="text-xs text-slate-400 font-handwriting text-lg">Город Брянск</span>
+        </div>
+
+        <div id="right-cards-container" class="space-y-4">
+          <!-- Injected via JS -->
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Grammar Helper Modal (Road to Russia Lesson 7) -->
+  <div id="grammar-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-6 lg:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
+      
+      <!-- Close button -->
+      <button onclick="toggleGrammarModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+        ✕
+      </button>
+
+      <div class="flex items-center gap-3 mb-6">
+        <div class="text-3xl">📚</div>
+        <div>
+          <h3 class="text-xl font-bold text-white">Учебник «Дорога в Россию» • Урок 7</h3>
+          <p class="text-xs text-slate-400">Грамматическая памятка для студентов: глаголы и маркеры времени</p>
+        </div>
+      </div>
+
+      <!-- Grammar grids -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
+        
+        <!-- Conjugation I -->
+        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 text-sm mb-2 flex items-center gap-1.5">
+            <span>🔹</span> I Спряжение (ЧИТАТЬ / ДЕЛАТЬ)
+          </h4>
+          <ul class="space-y-1 text-slate-300">
+            <li><strong>Я</strong> чита́-<strong>ю</strong> / де́ла-<strong>ю</strong></li>
+            <li><strong>Ты</strong> чита́-<strong>ешь</strong> / де́ла-<strong>ешь</strong></li>
+            <li><strong>Он / Она</strong> чита́-<strong>ет</strong> / де́ла-<strong>ет</strong></li>
+            <li><strong>Мы</strong> чита́-<strong>ем</strong> / де́ла-<strong>ем</strong></li>
+            <li><strong>Вы</strong> чита́-<strong>ете</strong> / де́ла-<strong>ете</strong></li>
+            <li><strong>Они</strong> чита́-<strong>ют</strong> / де́ла-<strong>ют</strong></li>
+          </ul>
+          <p class="mt-2 text-slate-400 italic">Сюда же: завтракать, обедать, гулять, отдыхать.</p>
+        </div>
+
+        <!-- Conjugation II -->
+        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+          <h4 class="font-bold text-sky-300 text-sm mb-2 flex items-center gap-1.5">
+            <span>🔹</span> II Спряжение (ГОВОРИТЬ / УЧИТЬ)
+          </h4>
+          <ul class="space-y-1 text-slate-300">
+            <li><strong>Я</strong> говор-<strong>ю́</strong> / уч-<strong>у́</strong> (сп-<strong>лю́</strong>)</li>
+            <li><strong>Ты</strong> говор-<strong>и́шь</strong> / у́ч-<strong>ишь</strong> (сп-<strong>и́шь</strong>)</li>
+            <li><strong>Он / Она</strong> говор-<strong>и́т</strong> / у́ч-<strong>ит</strong> (сп-<strong>и́т</strong>)</li>
+            <li><strong>Мы</strong> говор-<strong>и́м</strong> / у́ч-<strong>им</strong> (сп-<strong>и́м</strong>)</li>
+            <li><strong>Вы</strong> говор-<strong>и́те</strong> / у́ч-<strong>ите</strong> (сп-<strong>и́те</strong>)</li>
+            <li><strong>Они</strong> говор-<strong>я́т</strong> / у́ч-<strong>ат</strong> (сп-<strong>я́т</strong>)</li>
+          </ul>
+          <p class="mt-2 text-slate-400 italic">Чередования в 1-м лице: готовить ➔ я гото<strong>вл</strong>ю.</p>
+        </div>
+
+        <!-- Time adverbs -->
+        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+          <h4 class="font-bold text-emerald-300 text-sm mb-2 flex items-center gap-1.5">
+            <span>⏰</span> Когда? (Маркеры времени)
+          </h4>
+          <div class="grid grid-cols-2 gap-2 text-slate-300">
+            <div><strong class="text-white">у́тром</strong> (in the morning)</div>
+            <div><strong class="text-white">днём</strong> (in the afternoon)</div>
+            <div><strong class="text-white">ве́чером</strong> (in the evening)</div>
+            <div><strong class="text-white">но́чью</strong> (at night)</div>
+          </div>
+          <p class="mt-2 text-slate-400">Сначала (first / d'abord) ➔ Потом (then / ensuite)</p>
+        </div>
+
+        <!-- Frequency adverbs -->
+        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
+          <h4 class="font-bold text-rose-300 text-sm mb-2 flex items-center gap-1.5">
+            <span>📊</span> Как часто? (Частотность)
+          </h4>
+          <div class="space-y-1 text-slate-300">
+            <div><strong>всегда́</strong> (100%) — always / toujours</div>
+            <div><strong>обы́чно</strong> (80%) — usually / d'habitude</div>
+            <div><strong>ча́сто</strong> (60%) — often / souvent</div>
+            <div><strong>иногда́</strong> (30%) — sometimes / parfois</div>
+            <div><strong>ре́дко</strong> (10%) — rarely / rarement</div>
+            <div><strong>никогда́ не...</strong> (0%) — never / jamais</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="mt-6 text-center">
+        <button onclick="toggleGrammarModal()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-xs transition">
+          Вернуться к доске
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Success Celebration Modal -->
+  <div id="win-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-500/50 rounded-3xl max-w-md w-full p-8 text-center shadow-2xl relative">
+      <div class="text-6xl mb-3 animate-bounce">🎉</div>
+      <h3 class="text-2xl font-extrabold text-amber-300 mb-1">Отличная работа!</h3>
+      <p class="text-sm font-semibold text-white mb-2">Well done! • Bravo !</p>
+      <p class="text-xs text-slate-300 mb-6 leading-relaxed">
+        Все 8 действий дня в городе Брянске соединены правильно. Теперь вы готовы рассказать свой день по-русски на уроке в БГТУ!
+      </p>
+
+      <div class="flex gap-3 justify-center">
+        <button onclick="resetBoard(); toggleWinModal(false);" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition">
+          Сыграть ещё раз
+        </button>
+        <button onclick="toggleWinModal(false)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition">
+          Закрыть
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // 8 Specialized Pairs localized for African students in Bryansk (BSTU)
+    const PAIRS_DATA = [
+      {
+        id: 1,
+        time: "07:00 — УТРОМ",
+        en: "I wake up and wash up",
+        fr: "Je me réveille et fais ma toilette",
+        timeEmoji: "🌅",
+        landmarkTag: "📍 Общежитие БГТУ (Бежица)",
+        ru: "Утром я просыпаюсь и умываюсь в общежитии.",
+        grammar: "просыпа́ться (фраза) / умыва́ться",
+        svgType: "dorm"
+      },
+      {
+        id: 2,
+        time: "07:45 — УТРОМ",
+        en: "I have breakfast and drink hot coffee",
+        fr: "Je prends mon petit déjeuner et bois du café",
+        timeEmoji: "🍳",
+        landmarkTag: "📍 Кухня студенческого общежития",
+        ru: "Я завтракаю, ем яйца с хлебом и пью горячий кофе.",
+        grammar: "за́втракать (I) / пить (I) / есть",
+        svgType: "kitchen"
+      },
+      {
+        id: 3,
+        time: "08:30 — УТРОМ",
+        en: "I go to university for Russian class",
+        fr: "Je vais en cours de russe à l'université",
+        timeEmoji: "🚶‍♂️",
+        landmarkTag: "📍 Главный корпус БГТУ (бул. 50 лет Октября)",
+        ru: "Я иду на урок в главный корпус БГТУ на бульваре 50 лет Октября.",
+        grammar: "идти́ (I спряжение: я иду́)",
+        svgType: "bstu_building"
+      },
+      {
+        id: 4,
+        time: "09:00–13:00 — ДНЁМ",
+        en: "In class I learn words, read texts and write",
+        fr: "En cours, j'apprends des mots, lis et écris",
+        timeEmoji: "✍️",
+        landmarkTag: "📍 Аудитория русского языка (БГТУ)",
+        ru: "На уроке мы учим новые слова, читаем текст и пишем диктант.",
+        grammar: "учи́ть (II) / чита́ть (I) / писа́ть (I)",
+        svgType: "classroom"
+      },
+      {
+        id: 5,
+        time: "13:30 — ДНЁМ",
+        en: "I have lunch in the student cafeteria with friends",
+        fr: "Je déjeune à la cantine avec mes amis",
+        timeEmoji: "🍲",
+        landmarkTag: "📍 Студенческая столовая БГТУ",
+        ru: "Днём мы обедаем в столовой: едим суп, рис и пьём чай.",
+        grammar: "обе́дать (I спряжение)",
+        svgType: "canteen"
+      },
+      {
+        id: 6,
+        time: "16:00 — ДНЁМ",
+        en: "After classes I walk in the park and see wooden sculptures",
+        fr: "Après les cours, je me promène au parc Tolstoï",
+        timeEmoji: "🌳",
+        landmarkTag: "📍 Парк-музей им. А.К. Толстого (Брянск)",
+        ru: "После уроков мы иногда гуляем в парке Толстого и смотрим скульптуры.",
+        grammar: "гуля́ть (I) / смотре́ть (II)",
+        svgType: "park"
+      },
+      {
+        id: 7,
+        time: "19:30 — ВЕЧЕРОМ",
+        en: "In the evening I cook dinner and do homework",
+        fr: "Le soir, je prépare le dîner et fais mes devoirs",
+        timeEmoji: "🍛",
+        landmarkTag: "📍 Комната в общежитии БГТУ",
+        ru: "Вечером я готовлю рис с курицей, делаю уроки и звоню домой.",
+        grammar: "гото́вить (II: я готовлю) / де́лать (I)",
+        svgType: "room"
+      },
+      {
+        id: 8,
+        time: "23:00 — НОЧЬЮ",
+        en: "At night I sleep because tomorrow is class",
+        fr: "La nuit, je dors car demain j'ai cours",
+        timeEmoji: "🌙",
+        landmarkTag: "📍 Бежицкий район Брянска (ночь)",
+        ru: "Ночью я всегда крепко сплю, потому что рано утром урок.",
+        grammar: "спать (II: я сплю, он спит)",
+        svgType: "night"
+      }
+    ];
+
+    // State
+    let selectedLeftId = null;
+    let selectedRightId = null;
+    let matchedPairIds = [];
+    let isSoundMuted = false;
+    let audioContext = null;
+
+    // Vector SVG Illustrations for Real Bryansk Landmarks
+    function getLandmarkSVG(type) {
+      switch (type) {
+        case 'bstu_building':
+          return `
+            <svg class="w-full h-full text-amber-300" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- BSTU Classic Facade & Columns -->
+              <polygon points="50,6 15,22 85,22" fill="rgba(245, 158, 11, 0.2)" stroke-width="2"/>
+              <circle cx="50" cy="16" r="3" fill="#f59e0b" stroke="none"/>
+              <rect x="18" y="22" width="64" height="3" fill="#f59e0b" stroke="none"/>
+              <!-- 6 Classic Columns -->
+              <line x1="24" y1="25" x2="24" y2="58" stroke-width="2.5"/>
+              <line x1="34" y1="25" x2="34" y2="58" stroke-width="2.5"/>
+              <line x1="44" y1="25" x2="44" y2="58" stroke-width="2.5"/>
+              <line x1="56" y1="25" x2="56" y2="58" stroke-width="2.5"/>
+              <line x1="66" y1="25" x2="66" y2="58" stroke-width="2.5"/>
+              <line x1="76" y1="25" x2="76" y2="58" stroke-width="2.5"/>
+              <!-- Base and steps -->
+              <rect x="12" y="58" width="76" height="4" fill="rgba(245, 158, 11, 0.3)" stroke-width="1.5"/>
+            </svg>
+          `;
+        case 'park':
+          return `
+            <svg class="w-full h-full text-emerald-400" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- Tolstoy Park Famous Wooden Sculpture & Trees -->
+              <path d="M20,60 C20,38 32,25 32,15 C32,25 44,38 44,60 Z" fill="rgba(16, 185, 129, 0.2)" stroke-width="2"/>
+              <!-- Wooden carved sculpture totem silhouette -->
+              <rect x="52" y="20" width="16" height="40" rx="3" fill="rgba(217, 119, 6, 0.3)" stroke="#d97706" stroke-width="2"/>
+              <circle cx="60" cy="27" r="4" stroke="#d97706" stroke-width="1.5" fill="#fef3c7"/>
+              <line x1="56" y1="36" x2="64" y2="36" stroke="#d97706" stroke-width="1.5"/>
+              <line x1="56" y1="44" x2="64" y2="44" stroke="#d97706" stroke-width="1.5"/>
+              <!-- Park ground line -->
+              <line x1="5" y1="60" x2="95" y2="60" stroke-width="2"/>
+              <!-- Little bird -->
+              <path d="M75,18 Q80,14 85,18 Q90,14 95,18" stroke="#10b981" stroke-width="1.5"/>
+            </svg>
+          `;
+        case 'dorm':
+          return `
+            <svg class="w-full h-full text-sky-400" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- BSTU Student Dormitory Building -->
+              <rect x="22" y="12" width="56" height="48" rx="2" fill="rgba(56, 189, 248, 0.15)" stroke-width="2"/>
+              <!-- Grid of dormitory windows with warm lights -->
+              <rect x="28" y="18" width="8" height="8" rx="1" fill="#fde047" stroke-width="1"/>
+              <rect x="42" y="18" width="8" height="8" rx="1" fill="#fde047" stroke-width="1"/>
+              <rect x="56" y="18" width="8" height="8" rx="1" fill="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <rect x="70" y="18" width="8" height="8" rx="1" fill="#fde047" stroke-width="1"/>
+              
+              <rect x="28" y="32" width="8" height="8" rx="1" fill="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <rect x="42" y="32" width="8" height="8" rx="1" fill="#fde047" stroke-width="1"/>
+              <rect x="56" y="32" width="8" height="8" rx="1" fill="#fde047" stroke-width="1"/>
+              <rect x="70" y="32" width="8" height="8" rx="1" fill="rgba(255,255,255,0.3)" stroke-width="1"/>
+              <!-- Dormitory Door -->
+              <rect x="46" y="48" width="8" height="12" fill="#0284c7" stroke-width="1.5"/>
+            </svg>
+          `;
+        case 'canteen':
+          return `
+            <svg class="w-full h-full text-rose-400" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- Steaming cafeteria soup & tea -->
+              <path d="M25,35 C25,52 75,52 75,35 Z" fill="rgba(244, 63, 94, 0.2)" stroke-width="2"/>
+              <line x1="20" y1="35" x2="80" y2="35" stroke-width="2.5"/>
+              <!-- Steam curves -->
+              <path d="M40,28 Q37,20 42,12" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M50,28 Q47,18 52,10" stroke-width="1.8" stroke-linecap="round"/>
+              <path d="M60,28 Q57,20 62,12" stroke-width="1.8" stroke-linecap="round"/>
+              <!-- Spoon -->
+              <line x1="76" y1="28" x2="86" y2="50" stroke-width="2"/>
+              <ellipse cx="86" cy="50" rx="3" ry="5" fill="#f43f5e" stroke-width="1"/>
+            </svg>
+          `;
+        case 'kitchen':
+          return `
+            <svg class="w-full h-full text-amber-400" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- Breakfast pan and cup -->
+              <ellipse cx="45" cy="38" rx="24" ry="12" fill="rgba(245, 158, 11, 0.2)" stroke-width="2"/>
+              <circle cx="45" cy="38" r="5" fill="#f59e0b" stroke="none"/>
+              <line x1="69" y1="38" x2="88" y2="32" stroke-width="3" stroke-linecap="round"/>
+              <!-- Cup of hot coffee -->
+              <rect x="15" y="28" width="12" height="16" rx="2" fill="rgba(245, 158, 11, 0.3)" stroke-width="1.5"/>
+              <path d="M27,32 C31,32 31,40 27,40" stroke-width="1.5"/>
+            </svg>
+          `;
+        case 'classroom':
+          return `
+            <svg class="w-full h-full text-indigo-400" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- Blackboard with Russian Cyrillic -->
+              <rect x="15" y="12" width="70" height="42" rx="3" fill="rgba(99, 102, 241, 0.2)" stroke-width="2"/>
+              <line x1="10" y1="56" x2="90" y2="56" stroke-width="3"/>
+              <!-- Chalk text representation -->
+              <text x="25" y="32" font-size="10" fill="#a5b4fc" font-weight="bold" font-family="sans-serif">Аа Бб Вв</text>
+              <line x1="25" y1="42" x2="75" y2="42" stroke="#818cf8" stroke-width="1.5" stroke-dasharray="3,3"/>
+            </svg>
+          `;
+        case 'room':
+          return `
+            <svg class="w-full h-full text-violet-400" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- Desk, Road to Russia textbook & phone -->
+              <rect x="18" y="38" width="64" height="6" fill="#8b5cf6" stroke="none"/>
+              <line x1="24" y1="44" x2="24" y2="60" stroke-width="2"/>
+              <line x1="76" y1="44" x2="76" y2="60" stroke-width="2"/>
+              <!-- Book "Дорога в Россию" -->
+              <polygon points="34,36 48,32 62,36 48,40" fill="rgba(139, 92, 246, 0.3)" stroke="#c4b5fd" stroke-width="1.5"/>
+              <!-- Lamp light cone -->
+              <polygon points="70,16 62,38 78,38" fill="rgba(253, 224, 71, 0.15)" stroke="none"/>
+              <circle cx="70" cy="16" r="3" fill="#fde047" stroke="none"/>
+            </svg>
+          `;
+        case 'night':
+          return `
+            <svg class="w-full h-full text-cyan-300" viewBox="0 0 100 65" fill="none" stroke="currentColor">
+              <!-- Bezhitsa Night: Crescent moon & peaceful stars -->
+              <path d="M55,14 A14,14 0 0,0 72,36 A18,18 0 1,1 55,14 Z" fill="#67e8f9" stroke="none"/>
+              <circle cx="28" cy="22" r="1.5" fill="#ffffff" stroke="none"/>
+              <circle cx="38" cy="14" r="1" fill="#ffffff" stroke="none"/>
+              <circle cx="44" cy="30" r="1.5" fill="#ffffff" stroke="none"/>
+              <circle cx="82" cy="20" r="1" fill="#ffffff" stroke="none"/>
+              <circle cx="20" cy="38" r="1" fill="#ffffff" stroke="none"/>
+              <!-- Quiet town rooftops -->
+              <polygon points="10,60 25,48 40,60" fill="rgba(6, 182, 212, 0.2)" stroke-width="1.5"/>
+              <polygon points="40,60 55,42 70,60" fill="rgba(6, 182, 212, 0.2)" stroke-width="1.5"/>
+              <polygon points="70,60 85,50 95,60" fill="rgba(6, 182, 212, 0.2)" stroke-width="1.5"/>
+            </svg>
+          `;
+        default:
+          return '';
+      }
+    }
+
+    // Audio synthesizer with Web Audio API (Zero external mp3 files needed)
+    function playAudioTone(type) {
+      if (isSoundMuted) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        if (!audioContext) audioContext = new AudioCtx();
+        if (audioContext.state === 'suspended') audioContext.resume();
+
+        const now = audioContext.currentTime;
+
+        if (type === 'click') {
+          // Subtle soft tap
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(440, now);
+          osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
+          gain.gain.setValueAtTime(0.08, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start(now);
+          osc.stop(now + 0.06);
+        } else if (type === 'match') {
+          // Melodic major arpeggio (C5 -> E5 -> G5 -> C6)
+          const notes = [523.25, 659.25, 783.99, 1046.50];
+          notes.forEach((freq, idx) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+            gain.gain.setValueAtTime(0.14, now + idx * 0.07);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.28);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start(now + idx * 0.07);
+            osc.stop(now + idx * 0.07 + 0.3);
+          });
+        } else if (type === 'error') {
+          // Gentle warning buzz
+          const osc = audioContext.createOscillator();
+          const gain = audioContext.createGain();
+          osc.type = 'sawtooth';
+          osc.frequency.setValueAtTime(170, now);
+          osc.frequency.exponentialRampToValueAtTime(110, now + 0.22);
+          gain.gain.setValueAtTime(0.09, now);
+          gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+          osc.connect(gain);
+          gain.connect(audioContext.destination);
+          osc.start(now);
+          osc.stop(now + 0.23);
+        } else if (type === 'win') {
+          // Grand fanfare
+          const notes = [440, 554.37, 659.25, 880, 1108.73];
+          notes.forEach((freq, idx) => {
+            const osc = audioContext.createOscillator();
+            const gain = audioContext.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(freq, now + idx * 0.12);
+            gain.gain.setValueAtTime(0.18, now + idx * 0.12);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.12 + 0.5);
+            osc.connect(gain);
+            gain.connect(audioContext.destination);
+            osc.start(now + idx * 0.12);
+            osc.stop(now + idx * 0.12 + 0.55);
+          });
+        }
+      } catch (e) {
+        console.warn('Audio tone could not play', e);
+      }
+    }
+
+    // Native Speech Synthesis for Authentic Russian Pronunciation
+    function speakRussian(text, event) {
+      if (event) event.stopPropagation();
+      if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ru-RU';
+        utterance.rate = 0.82; // Accessible speed for A1 beginner students
+        window.speechSynthesis.speak(utterance);
+      }
+    }
+
+    function toggleAudio() {
+      isSoundMuted = !isSoundMuted;
+      document.getElementById('sound-icon').textContent = isSoundMuted ? '🔇' : '🔊';
+    }
+
+    // Shuffle helper
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    // Render the interactive cards
+    function renderBoard() {
+      const leftContainer = document.getElementById('left-cards-container');
+      const rightContainer = document.getElementById('right-cards-container');
+      leftContainer.innerHTML = '';
+      rightContainer.innerHTML = '';
+
+      // Keep left cards ordered or lightly shuffled, shuffle right cards randomly
+      const leftCards = [...PAIRS_DATA];
+      const rightCards = shuffleArray(PAIRS_DATA);
+
+      // Render Left Cards (Time + EN/FR Padlet sticky style)
+      leftCards.forEach((item, index) => {
+        const isMatched = matchedPairIds.includes(item.id);
+        const isSelected = selectedLeftId === item.id;
+
+        const card = document.createElement('div');
+        card.id = `left-card-${item.id}`;
+        card.className = `
+          relative rounded-2xl p-4 transition-all duration-200 cursor-pointer pin-shadow border-2
+          ${isMatched 
+            ? 'bg-emerald-950/40 border-emerald-500/80 text-emerald-200 opacity-90' 
+            : isSelected 
+              ? 'bg-amber-100 text-slate-900 border-amber-400 card-selected ring-4 ring-amber-400/30' 
+              : 'bg-amber-50/95 hover:bg-white text-slate-900 border-amber-200/90 hover:border-amber-300 hover:-translate-y-1'
+          }
+        `;
+        card.onclick = () => onSelectLeft(item.id);
+
+        card.innerHTML = `
+          <div class="tape"></div>
+          <div class="flex items-center justify-between mb-2">
+            <span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-black ${isMatched ? 'bg-emerald-500/20 text-emerald-300' : 'bg-amber-500 text-white'}">
+              <span>${item.timeEmoji}</span>
+              <span>${item.time}</span>
+            </span>
+            <span class="text-xs font-bold ${isMatched ? 'text-emerald-400' : 'text-slate-400'}">
+              ${isMatched ? '✓ Связано' : `#0${item.id}`}
+            </span>
+          </div>
+
+          <!-- English phrase -->
+          <div class="flex items-start gap-2 mb-1.5">
+            <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-100 text-blue-800 uppercase tracking-wider shrink-0 mt-0.5">EN</span>
+            <p class="text-sm font-bold leading-snug ${isMatched ? 'text-emerald-100' : 'text-slate-800'}">
+              ${item.en}
+            </p>
+          </div>
+
+          <!-- French phrase -->
+          <div class="flex items-start gap-2">
+            <span class="text-xs font-bold px-1.5 py-0.5 rounded bg-rose-100 text-rose-800 uppercase tracking-wider shrink-0 mt-0.5">FR</span>
+            <p class="text-xs font-medium italic leading-snug ${isMatched ? 'text-emerald-200/80' : 'text-slate-600'}">
+              « ${item.fr} »
+            </p>
+          </div>
+        `;
+
+        leftContainer.appendChild(card);
+      });
+
+      // Render Right Cards (Russian Phrase + Landmark SVG + Audio)
+      rightCards.forEach((item) => {
+        const isMatched = matchedPairIds.includes(item.id);
+        const isSelected = selectedRightId === item.id;
+
+        const card = document.createElement('div');
+        card.id = `right-card-${item.id}`;
+        card.className = `
+          relative rounded-2xl p-4 transition-all duration-200 cursor-pointer pin-shadow border-2
+          ${isMatched 
+            ? 'bg-emerald-950/40 border-emerald-500/80 text-emerald-200 opacity-90' 
+            : isSelected 
+              ? 'bg-sky-100 text-slate-900 border-sky-400 card-selected ring-4 ring-sky-400/30' 
+              : 'bg-sky-50/95 hover:bg-white text-slate-900 border-sky-200/90 hover:border-sky-300 hover:-translate-y-1'
+          }
+        `;
+        card.onclick = () => onSelectRight(item.id);
+
+        card.innerHTML = `
+          <div class="tape"></div>
+          
+          <div class="flex items-start justify-between gap-2 mb-2">
+            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-bold ${isMatched ? 'bg-emerald-500/20 text-emerald-300' : 'bg-sky-600 text-white'}">
+              ${item.landmarkTag}
+            </span>
+
+            <!-- Listen button -->
+            <button onclick="speakRussian('${item.ru.replace(/'/g, "\\'")}', event)" class="p-1.5 rounded-lg bg-white/80 hover:bg-sky-200 text-sky-800 shadow-sm transition hover:scale-110" title="Послушать произношение">
+              🔊
+            </button>
+          </div>
+
+          <div class="grid grid-cols-4 gap-3 items-center">
+            <!-- Landmark Vector Graphic -->
+            <div class="col-span-1 h-16 w-full rounded-xl bg-slate-900/10 p-1 flex items-center justify-center border border-slate-300/40 overflow-hidden">
+              ${getLandmarkSVG(item.svgType)}
+            </div>
+
+            <!-- Russian text & Grammar chip -->
+            <div class="col-span-3">
+              <p class="text-sm lg:text-base font-extrabold leading-snug tracking-tight ${isMatched ? 'text-emerald-100' : 'text-slate-900'}">
+                ${item.ru}
+              </p>
+              <div class="mt-1 flex items-center gap-2">
+                <span class="text-[11px] font-semibold text-slate-500 bg-slate-200/80 px-2 py-0.5 rounded">
+                  Глагол: ${item.grammar}
+                </span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        rightContainer.appendChild(card);
+      });
+
+      updateScoreText();
+      requestAnimationFrame(drawConnections);
+    }
+
+    // Click handler for Left Column
+    function onSelectLeft(id) {
+      if (matchedPairIds.includes(id)) return;
+      playAudioTone('click');
+
+      if (selectedLeftId === id) {
+        selectedLeftId = null;
+        updateStatus("Выбор отменён. Нажмите на карточку слева");
+      } else {
+        selectedLeftId = id;
+        updateStatus(`Выбрана карточка #${id}. Теперь найдите подходящую русскую фразу справа! ➔`);
+        if (selectedRightId !== null) {
+          evaluateMatch();
+        }
+      }
+      renderBoard();
+    }
+
+    // Click handler for Right Column
+    function onSelectRight(id) {
+      if (matchedPairIds.includes(id)) return;
+      playAudioTone('click');
+
+      if (selectedRightId === id) {
+        selectedRightId = null;
+        updateStatus("Выбор справа отменён");
+      } else {
+        selectedRightId = id;
+        if (selectedLeftId !== null) {
+          evaluateMatch();
+        } else {
+          updateStatus("Карточка справа выбрана. Теперь выберите время и перевод слева! ⬅");
+        }
+      }
+      renderBoard();
+    }
+
+    // Compare selection
+    function evaluateMatch() {
+      if (selectedLeftId === selectedRightId) {
+        // MATCH SUCCESS!
+        const matchedId = selectedLeftId;
+        matchedPairIds.push(matchedId);
+        playAudioTone('match');
+
+        // Pronounce the matched sentence for language learning
+        const item = PAIRS_DATA.find(p => p.id === matchedId);
+        if (item) {
+          setTimeout(() => speakRussian(item.ru), 250);
+        }
+
+        updateStatus(`🎉 Отлично! Карточка «${item.time}» успешно связана с Брянском!`);
+        selectedLeftId = null;
+        selectedRightId = null;
+
+        // Check if finished
+        if (matchedPairIds.length === PAIRS_DATA.length) {
+          setTimeout(() => {
+            playAudioTone('win');
+            toggleWinModal(true);
+          }, 600);
+        }
+      } else {
+        // WRONG PAIR
+        playAudioTone('error');
+        updateStatus("❌ Не совпадает! Попробуйте ещё раз внимательно сопоставить время и глагол.");
+
+        const leftEl = document.getElementById(`left-card-${selectedLeftId}`);
+        const rightEl = document.getElementById(`right-card-${selectedRightId}`);
+        if (leftEl) leftEl.classList.add('animate-shake');
+        if (rightEl) rightEl.classList.add('animate-shake');
+
+        setTimeout(() => {
+          if (leftEl) leftEl.classList.remove('animate-shake');
+          if (rightEl) rightEl.classList.remove('animate-shake');
+          selectedLeftId = null;
+          selectedRightId = null;
+          renderBoard();
+        }, 550);
+      }
+    }
+
+    // Draw SVG connecting lines between cards
+    function drawConnections() {
+      const svg = document.getElementById('connection-layer');
+      const containerRect = svg.parentElement.getBoundingClientRect();
+      
+      // Clear previous lines (keep arrowhead marker)
+      const existingPaths = svg.querySelectorAll('.connection-path');
+      existingPaths.forEach(p => p.remove());
+
+      // Line color palette
+      const colors = ['#10b981', '#38bdf8', '#fbbf24', '#f43f5e', '#a855f7', '#14b8a6', '#f97316', '#6366f1'];
+
+      matchedPairIds.forEach((id, idx) => {
+        const leftEl = document.getElementById(`left-card-${id}`);
+        const rightEl = document.getElementById(`right-card-${id}`);
+
+        if (leftEl && rightEl) {
+          const r1 = leftEl.getBoundingClientRect();
+          const r2 = rightEl.getBoundingClientRect();
+
+          // Anchor points
+          const x1 = r1.right - containerRect.left;
+          const y1 = r1.top + r1.height / 2 - containerRect.top;
+          const x2 = r2.left - containerRect.left;
+          const y2 = r2.top + r2.height / 2 - containerRect.top;
+
+          // Bezier control points for smooth curving arrow like Miro / Padlet
+          const dx = Math.abs(x2 - x1);
+          const cx1 = x1 + dx * 0.45;
+          const cy1 = y1;
+          const cx2 = x2 - dx * 0.45;
+          const cy2 = y2;
+
+          const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+          path.setAttribute('d', `M ${x1} ${y1} C ${cx1} ${cy1}, ${cx2} ${cy2}, ${x2} ${y2}`);
+          path.setAttribute('stroke', colors[idx % colors.length]);
+          path.setAttribute('stroke-width', '4');
+          path.setAttribute('fill', 'none');
+          path.setAttribute('stroke-linecap', 'round');
+          path.setAttribute('class', 'connection-path');
+          path.setAttribute('marker-end', 'url(#arrowhead)');
+          path.style.filter = 'drop-shadow(0 2px 4px rgba(0,0,0,0.4))';
+
+          svg.appendChild(path);
+        }
+      });
+    }
+
+    // Helper functions
+    function updateStatus(msg) {
+      document.getElementById('selection-status').textContent = msg;
+    }
+
+    function updateScoreText() {
+      document.getElementById('score-counter').textContent = `${matchedPairIds.length} / ${PAIRS_DATA.length}`;
+    }
+
+    function resetBoard() {
+      matchedPairIds = [];
+      selectedLeftId = null;
+      selectedRightId = null;
+      updateStatus("👆 Нажмите на любую карточку слева, чтобы начать соединение");
+      renderBoard();
+    }
+
+    function revealAllPairs() {
+      matchedPairIds = PAIRS_DATA.map(p => p.id);
+      selectedLeftId = null;
+      selectedRightId = null;
+      playAudioTone('win');
+      updateStatus("✨ Показано верное решение для всех 8 ситуаций дня в Брянске!");
+      renderBoard();
+    }
+
+    function toggleGrammarModal() {
+      const modal = document.getElementById('grammar-modal');
+      modal.classList.toggle('hidden');
+    }
+
+    function toggleWinModal(show) {
+      const modal = document.getElementById('win-modal');
+      if (show) modal.classList.remove('hidden');
+      else modal.classList.add('hidden');
+    }
+
+    // Redraw on window resize
+    window.addEventListener('resize', drawConnections);
+    window.addEventListener('scroll', drawConnections);
+
+    // Initial render
+    window.onload = function () {
+      renderBoard();
+    };
+  </script>
+</body>
+</html>
