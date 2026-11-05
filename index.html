@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Мой день в Брянске | Картинки и фразы • Урок 7 РКИ (БГТУ)</title>
+  <title>Мой день в Брянске | Все 16 картинок • Урок 7 РКИ (БГТУ)</title>
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Google Fonts -->
@@ -93,11 +93,11 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col selection:bg-amber-400 selection:text-slate-900 pb-24 md:pb-16">
 
-  <!-- Оптимизированная шапка: на мобильных занимает 1 компактную строку -->
+  <!-- Компактная адаптивная шапка -->
   <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/80 px-2.5 sm:px-6 py-2 transition-all">
     <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
       
-      <!-- Логотип и заголовок -->
+      <!-- Заголовок -->
       <div class="flex items-center gap-2 min-w-0">
         <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-base sm:text-xl shadow-md">
           📍
@@ -108,7 +108,7 @@
               Мой день в Брянске
             </h1>
             <span class="text-[9px] sm:text-xs font-semibold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
-              Урок 7 • А1
+              Все 16 карточек
             </span>
           </div>
           <p class="hidden md:block text-[11px] text-slate-400 truncate">
@@ -117,35 +117,41 @@
         </div>
       </div>
 
-      <!-- Компактная панель управления -->
+      <!-- Кнопки управления -->
       <div class="flex items-center gap-1 sm:gap-2 shrink-0">
-        <label class="sr-only" for="mode-select">Режим карточек</label>
+        
+        <!-- Селектор режима -->
         <select id="mode-select" onchange="changeGameMode(this.value)" class="bg-slate-800 border border-slate-600 text-slate-100 text-[11px] sm:text-xs font-semibold rounded-lg px-1.5 sm:px-2.5 py-1 sm:py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-400 cursor-pointer">
-          <option value="core8">8 карточек</option>
-          <option value="extra8">8 доп.</option>
-          <option value="all16">Все 16</option>
+          <option value="all16" selected>Все 16 карточек</option>
+          <option value="core8">8 карточек (Урок 7)</option>
+          <option value="extra8">8 карточек (Доп.)</option>
         </select>
 
+        <!-- Счётчик очков -->
         <div class="bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1 flex items-center gap-1 shadow-inner text-[11px] sm:text-xs font-extrabold text-amber-300">
           <span>⭐</span>
-          <span id="score-counter">0 / 8</span>
+          <span id="score-counter">0 / 16</span>
         </div>
 
+        <!-- Подгрузка спрайта -->
         <input type="file" id="sprite-upload-input" accept="image/*" class="hidden" onchange="handleSpriteUpload(event)">
         <button onclick="document.getElementById('sprite-upload-input').click()" id="btn-sprite-upload" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Загрузить photo_2026-11-04_20-35-00.jpg">
           <span>🖼️</span>
           <span id="sprite-btn-label" class="hidden md:inline">Загрузить фото</span>
         </button>
 
-        <button id="btn-toggle-sound" onclick="toggleAudio()" class="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition" title="Звук">
+        <!-- Звук -->
+        <button id="btn-toggle-sound" onclick="toggleAudio()" class="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition" title="Звуковые эффекты">
           <span id="sound-icon">🔊</span>
         </button>
 
-        <button onclick="toggleGrammarModal()" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Грамматическая памятка">
+        <!-- Грамматическая памятка -->
+        <button onclick="toggleGrammarModal()" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Грамматика">
           <span>📖</span>
           <span class="hidden sm:inline">Глаголы</span>
         </button>
 
+        <!-- Перемешать -->
         <button onclick="shuffleAndResetBoard()" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Перемешать карточки">
           <span>🔄</span>
         </button>
@@ -154,13 +160,13 @@
     </div>
   </header>
 
-  <!-- Блок инструкции -->
+  <!-- Информационный блок -->
   <div class="max-w-7xl mx-auto w-full px-3 sm:px-6 mt-2.5 mb-1.5">
     <div class="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-indigo-500/10 border border-slate-700/80 rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2 backdrop-blur-sm">
       <div class="flex items-center gap-2 min-w-0">
         <span class="text-base sm:text-xl shrink-0">🎯</span>
         <p class="text-[11px] sm:text-xs text-slate-300 truncate">
-          <strong class="text-amber-300">1.</strong> Картинка слева ➔ <strong class="text-sky-300">2.</strong> Фраза справа
+          <strong class="text-amber-300">1.</strong> Картинка слева ➔ <strong class="text-sky-300">2.</strong> Фраза с переводом справа
         </p>
       </div>
       <div id="selection-status" class="text-[10px] sm:text-xs font-medium text-slate-300 shrink-0 bg-slate-800 px-2.5 py-1 rounded-md border border-slate-700">
@@ -168,18 +174,18 @@
       </div>
     </div>
 
-    <!-- Мобильные кнопки перехода -->
+    <!-- Мобильные кнопки быстрого скролла -->
     <div class="grid grid-cols-2 gap-2 mt-2 md:hidden">
       <button onclick="scrollToColumn('left')" class="py-1.5 px-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition">
         <span>1. Картинки</span> ↑
       </button>
       <button onclick="scrollToColumn('right')" class="py-1.5 px-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-200 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition">
-        <span>2. Русские фразы</span> ↓
+        <span>2. Фразы и перевод</span> ↓
       </button>
     </div>
   </div>
 
-  <!-- Рабочая область доски -->
+  <!-- Рабочая область -->
   <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 mt-2 flex-1 relative">
     
     <svg id="connection-layer" class="hidden md:block">
@@ -192,30 +198,30 @@
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-10 relative z-10 items-start">
       
-      <!-- ЛЕВАЯ КОЛОНКА -->
+      <!-- ЛЕВАЯ КОЛОНКА (Картинки) -->
       <div id="left-column-section" class="scroll-mt-14">
         <div class="flex items-center justify-between mb-2.5 pb-1.5 border-b border-amber-500/30">
           <div class="flex items-center gap-1.5">
             <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
             <h2 class="font-bold text-xs sm:text-sm text-amber-200 tracking-wide uppercase">
-              1. Время суток и картинка
+              1. Картинка и время
             </h2>
           </div>
-          <span class="text-slate-400 font-handwriting text-sm sm:text-base">Мой день</span>
+          <span class="text-slate-400 font-handwriting text-sm sm:text-base">16 действий дня</span>
         </div>
         <div id="left-cards-container" class="space-y-3 sm:space-y-4"></div>
       </div>
 
-      <!-- ПРАВАЯ КОЛОНКА -->
+      <!-- ПРАВАЯ КОЛОНКА (Фразы + Перевод) -->
       <div id="right-column-section" class="scroll-mt-14">
         <div class="flex items-center justify-between mb-2.5 pb-1.5 border-b border-sky-500/30">
           <div class="flex items-center gap-1.5">
             <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
             <h2 class="font-bold text-xs sm:text-sm text-sky-200 tracking-wide uppercase">
-              2. Русская фраза (Брянск • БГТУ)
+              2. Фраза на русском + перевод
             </h2>
           </div>
-          <span class="text-slate-400 font-handwriting text-sm sm:text-base">Город Брянск</span>
+          <span class="text-slate-400 font-handwriting text-sm sm:text-base">Брянск • БГТУ</span>
         </div>
         <div id="right-cards-container" class="space-y-3 sm:space-y-4"></div>
       </div>
@@ -223,34 +229,34 @@
     </div>
   </main>
 
-  <!-- Мобильная плашка активного выбора -->
+  <!-- Мобильная плашка при выборе карточки -->
   <div id="mobile-selection-bar" class="fixed bottom-3 inset-x-3 z-40 md:hidden hidden">
     <div class="bg-slate-900/95 backdrop-blur-md border border-amber-400/80 rounded-xl p-2.5 shadow-2xl flex items-center justify-between gap-2">
       <div class="min-w-0 flex-1">
         <div id="mobile-bar-title" class="text-xs font-bold text-amber-300 truncate">
-          Выбрана карточка #01
+          Выбрана карточка
         </div>
         <div id="mobile-bar-subtitle" class="text-[10px] text-slate-300 truncate">
-          Выберите подходящую фразу во 2-й колонке
+          Найдите соответствие во 2-й колонке
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
         <button id="mobile-bar-jump-btn" onclick="jumpToOppositeColumn()" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs shadow">
           К паре ↕
         </button>
-        <button onclick="clearSelection()" class="p-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs" title="Отменить выбор">
+        <button onclick="clearSelection()" class="p-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs" title="Сбросить выбор">
           ✕
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Модальное окно увеличения картинки (🔍) -->
+  <!-- Модальное окно зума картинки (🔍) -->
   <div id="zoom-modal" onclick="closeZoomModal()" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
     <div onclick="event.stopPropagation()" class="bg-amber-50 border-4 border-amber-900 rounded-3xl max-w-xl w-full p-4 sm:p-6 shadow-2xl relative">
       <div class="flex items-center justify-between mb-3">
         <span id="zoom-modal-badge" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs sm:text-sm font-black bg-amber-500 text-white">
-          🌅 07:00 — УТРОМ
+          07:00 — УТРОМ
         </span>
         <button onclick="closeZoomModal()" class="w-8 h-8 rounded-full bg-amber-200 hover:bg-amber-300 text-amber-950 font-bold flex items-center justify-center transition">
           ✕
@@ -258,8 +264,8 @@
       </div>
       <div id="zoom-modal-art" class="w-full aspect-[287/212] overflow-hidden rounded-xl border border-amber-300 relative bg-amber-100"></div>
       <div class="mt-3 text-center">
-        <p class="text-sm sm:text-base font-extrabold text-slate-800">
-          Что делает студент в это время?
+        <p id="zoom-modal-translation" class="text-sm font-bold text-slate-700 italic">
+          Translation will appear here
         </p>
       </div>
     </div>
@@ -276,67 +282,63 @@
         <div class="text-2xl">📚</div>
         <div>
           <h3 class="text-base sm:text-lg font-bold text-white">Учебник «Дорога в Россию» • Урок 7</h3>
-          <p class="text-[11px] text-slate-400">Грамматическая памятка: глаголы распорядка дня и время суток</p>
+          <p class="text-[11px] text-slate-400">Спряжение глаголов распорядка дня</p>
         </div>
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] sm:text-xs">
         <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
           <h4 class="font-bold text-amber-300 mb-1 flex items-center gap-1">
-            <span>🔹</span> I спряжение (ЧИТАТЬ / ДЕЛАТЬ / УМЫВАТЬСЯ)
+            <span>🔹</span> I спряжение (-ать / -ять / -ти)
           </h4>
           <ul class="space-y-0.5 text-slate-300">
-            <li><strong>Я</strong> чита́-<strong>ю</strong> / де́ла-<strong>ю</strong> / умыва́-<strong>юсь</strong></li>
-            <li><strong>Ты</strong> чита́-<strong>ешь</strong> / де́ла-<strong>ешь</strong> / умыва́-<strong>ешься</strong></li>
-            <li><strong>Он / Она</strong> чита́-<strong>ет</strong> / де́ла-<strong>ет</strong> / умыва́-<strong>ется</strong></li>
-            <li><strong>Мы</strong> чита́-<strong>ем</strong> / де́ла-<strong>ем</strong> / умыва́-<strong>емся</strong></li>
-            <li><strong>Вы</strong> чита́-<strong>ете</strong> / де́ла-<strong>ете</strong> / умыва́-<strong>етесь</strong></li>
-            <li><strong>Они</strong> чита́-<strong>ют</strong> / де́ла-<strong>ют</strong> / умыва́-<strong>ются</strong></li>
+            <li><strong>Я</strong> чита́-<strong>ю</strong> / одева́-<strong>юсь</strong> / ид-<strong>у́</strong></li>
+            <li><strong>Ты</strong> чита́-<strong>ешь</strong> / одева́-<strong>ешься</strong> / ид-<strong>ёшь</strong></li>
+            <li><strong>Он / Она</strong> чита́-<strong>ет</strong> / одева́-<strong>ется</strong> / ид-<strong>ёт</strong></li>
+            <li><strong>Мы</strong> чита́-<strong>ем</strong> / одева́-<strong>емся</strong> / ид-<strong>ём</strong></li>
+            <li><strong>Вы</strong> чита́-<strong>ете</strong> / одева́-<strong>етесь</strong> / ид-<strong>ёте</strong></li>
+            <li><strong>Они</strong> чита́-<strong>ют</strong> / одева́-<strong>ются</strong> / ид-<strong>ут</strong></li>
           </ul>
         </div>
 
         <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
           <h4 class="font-bold text-sky-300 mb-1 flex items-center gap-1">
-            <span>🔹</span> II спряжение (УЧИТЬ / ЗВОНИТЬ / ЧИСТИТЬ)
+            <span>🔹</span> II спряжение (-ить / исключения)
           </h4>
           <ul class="space-y-0.5 text-slate-300">
-            <li><strong>Я</strong> уч-<strong>у́</strong> / звон-<strong>ю́</strong> / чи́щ-<strong>у</strong> / сп-<strong>лю́</strong></li>
-            <li><strong>Ты</strong> у́ч-<strong>ишь</strong> / звон-<strong>и́шь</strong> / чи́ст-<strong>ишь</strong> / сп-<strong>и́шь</strong></li>
-            <li><strong>Он / Она</strong> у́ч-<strong>ит</strong> / звон-<strong>и́т</strong> / чи́ст-<strong>ит</strong> / сп-<strong>и́т</strong></li>
-            <li><strong>Мы</strong> у́ч-<strong>им</strong> / звон-<strong>и́м</strong> / чи́ст-<strong>им</strong> / сп-<strong>и́м</strong></li>
-            <li><strong>Вы</strong> у́ч-<strong>ите</strong> / звон-<strong>и́те</strong> / чи́ст-<strong>ите</strong> / сп-<strong>и́те</strong></li>
-            <li><strong>Они</strong> у́ч-<strong>ат</strong> / звон-<strong>я́т</strong> / чи́ст-<strong>ят</strong> / сп-<strong>я́т</strong></li>
+            <li><strong>Я</strong> чи́щ-<strong>у</strong> / звон-<strong>ю́</strong> / сп-<strong>лю́</strong></li>
+            <li><strong>Ты</strong> чи́ст-<strong>ишь</strong> / звон-<strong>и́шь</strong> / сп-<strong>и́шь</strong></li>
+            <li><strong>Он / Она</strong> чи́ст-<strong>ит</strong> / звон-<strong>и́т</strong> / сп-<strong>и́т</strong></li>
+            <li><strong>Мы</strong> чи́ст-<strong>им</strong> / звон-<strong>и́м</strong> / сп-<strong>и́м</strong></li>
+            <li><strong>Вы</strong> чи́ст-<strong>ите</strong> / звон-<strong>и́те</strong> / сп-<strong>и́те</strong></li>
+            <li><strong>Они</strong> чи́ст-<strong>ят</strong> / звон-<strong>я́т</strong> / сп-<strong>я́т</strong></li>
           </ul>
         </div>
 
         <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-emerald-300 mb-1 flex items-center gap-1">
-            <span>⏰</span> Когда? (Время суток)
-          </h4>
+          <h4 class="font-bold text-emerald-300 mb-1">⏰ Время суток</h4>
           <div class="grid grid-cols-2 gap-1 text-slate-300">
-            <div>🌅 <strong>у́тром</strong> (06:00–11:00)</div>
-            <div>☀️ <strong>днём</strong> (12:00–17:00)</div>
-            <div>🌆 <strong>ве́чером</strong> (18:00–22:00)</div>
-            <div>🌙 <strong>но́чью</strong> (23:00–05:00)</div>
+            <div>🌅 <strong>у́тром</strong> (in the morning)</div>
+            <div>☀️ <strong>днём</strong> (in the afternoon)</div>
+            <div>🌆 <strong>ве́чером</strong> (in the evening)</div>
+            <div>🌙 <strong>но́чью</strong> (at night)</div>
           </div>
         </div>
 
         <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
-          <h4 class="font-bold text-rose-300 mb-1 flex items-center gap-1">
-            <span>📊</span> Как часто?
-          </h4>
+          <h4 class="font-bold text-rose-300 mb-1">📊 Частотность действий</h4>
           <div class="space-y-0.5 text-slate-300">
-            <div><strong>всегда́ / ка́ждый день</strong> (100%)</div>
-            <div><strong>обы́чно</strong> (80%) | <strong>ча́сто</strong> (60%)</div>
-            <div><strong>иногда́</strong> (30%) | <strong>ре́дко</strong> (10%)</div>
-            <div><strong>никогда́ не...</strong> (0%)</div>
+            <div><strong>каждый день</strong> (every day)</div>
+            <div><strong>обычно</strong> (usually) | <strong>часто</strong> (often)</div>
+            <div><strong>иногда</strong> (sometimes) | <strong>редко</strong> (rarely)</div>
+            <div><strong>никогда не...</strong> (never)</div>
           </div>
         </div>
       </div>
 
       <div class="mt-4 text-center">
         <button onclick="toggleGrammarModal()" class="px-5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-xs transition">
-          Вернуться к доске
+          Закрыть
         </button>
       </div>
     </div>
@@ -347,9 +349,9 @@
     <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-500/50 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
       <div class="text-5xl mb-2">🎉</div>
       <h3 class="text-xl font-extrabold text-amber-300 mb-1">Отличная работа!</h3>
-      <p class="text-xs font-semibold text-emerald-300 mb-2">Все картинки и фразы соединены верно!</p>
+      <p class="text-xs font-semibold text-emerald-300 mb-2">Все 16 карточек соединены верно!</p>
       <p class="text-[11px] text-slate-300 mb-5 leading-relaxed">
-        Вы сопоставили все действия с правильными предложениями и готовы рассказать о своём дне в Брянске!
+        Вы успешно изучили и сопоставили все 16 иллюстраций распорядка дня студента с русскими предложениями и их переводом.
       </p>
       <div class="flex gap-2 justify-center">
         <button onclick="shuffleAndResetBoard(); toggleWinModal(false);" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition">
@@ -363,26 +365,179 @@
   </div>
 
   <script>
+    // 16 карточек в соответствии с сеткой 4х4 на фото photo_2026-11-04_20-35-00.jpg
     const ALL_16_CARDS = [
-      { id: 1, group: 'core8', row: 0, col: 0, time: "07:00 — УТРОМ", landmarkTag: "📍 Общежитие БГТУ (Бежица)", ru: "Утром я просыпаюсь по будильнику в семь часов в общежитии.", grammar: "просыпа́ться (I)" },
-      { id: 2, group: 'extra8', row: 0, col: 1, time: "07:10 — УТРОМ", landmarkTag: "📍 Ванная комната в общежитии", ru: "Утром я чищу зубы в ванной перед зеркалом.", grammar: "чи́стить (II: я чи́щу)" },
-      { id: 3, group: 'extra8', row: 0, col: 2, time: "07:15 — УТРОМ", landmarkTag: "📍 Умывальник в общежитии БГТУ", ru: "Потом я умываюсь холодной водой.", grammar: "умыва́ться (I)" },
-      { id: 4, group: 'extra8', row: 0, col: 3, time: "07:25 — УТРОМ", landmarkTag: "📍 Душевая в студенческом общежитии", ru: "Утром я принимаю тёплый душ.", grammar: "принима́ть душ (I)" },
-      { id: 5, group: 'extra8', row: 1, col: 0, time: "07:40 — УТРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "В комнате я одеваюсь: надеваю рубашку и брюки.", grammar: "одева́ться (I) / надева́ть (I)" },
-      { id: 6, group: 'core8', row: 1, col: 1, time: "08:00 — УТРОМ", landmarkTag: "📍 Кухня студенческого общежития", ru: "В восемь часов утра я завтракаю: ем кашу, тост и пью горячий кофе.", grammar: "за́втракать (I) / есть / пить (I)" },
-      { id: 7, group: 'core8', row: 1, col: 2, time: "08:30 — УТРОМ", landmarkTag: "📍 Главный корпус БГТУ (бул. 50 лет Октября)", ru: "Утром я иду на урок русского языка в главный корпус БГТУ.", grammar: "идти́ (I: я иду́)" },
-      { id: 8, group: 'core8', row: 1, col: 3, time: "09:00–13:00 — ДНЁМ", landmarkTag: "📍 Аудитория русского языка (БГТУ)", ru: "Днём на уроке в аудитории мы слушаем преподавателя и пишем в тетради.", grammar: "слу́шать (I) / писа́ть (I)" },
-      { id: 9, group: 'core8', row: 2, col: 0, time: "13:00 — ДНЁМ", landmarkTag: "📍 Студенческая столовая БГТУ", ru: "Днём в час дня я обедаю в столовой: ем суп, второе блюдо и пью чай.", grammar: "обе́дать (I) / есть / пить (I)" },
-      { id: 10, group: 'core8', row: 2, col: 1, time: "16:00 — ДНЁМ", landmarkTag: "📍 Парк-музей им. А.К. Толстого (Брянск)", ru: "Днём после уроков мы гуляем и разговариваем с друзьями в парке Толстого.", grammar: "гуля́ть (I) / разгова́ривать (I)" },
-      { id: 11, group: 'core8', row: 2, col: 2, time: "17:30 — ВЕЧЕРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "Вечером я сижу на диване в комнате и звоню домой по телефону.", grammar: "сиде́ть (II) / звони́ть (II)" },
-      { id: 12, group: 'extra8', row: 2, col: 3, time: "18:30 — ВЕЧЕРОМ", landmarkTag: "📍 Стадион БГТУ (Бежица)", ru: "Вечером мы с друзьями играем в футбол на стадионе.", grammar: "игра́ть в футбо́л (I)" },
-      { id: 13, group: 'extra8', row: 3, col: 0, time: "19:30 — ВЕЧЕРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "Вечером я лежу на кровати, отдыхаю и смотрю в телефон.", grammar: "лежа́ть (II) / отдыха́ть (I)" },
-      { id: 14, group: 'extra8', row: 3, col: 1, time: "20:00 — ВЕЧЕРОМ", landmarkTag: "📍 Кухня общежития (вечер)", ru: "В восемь часов вечера я ужинаю на кухне в общежитии.", grammar: "у́жинать (I: я у́жинаю)" },
-      { id: 15, group: 'extra8', row: 3, col: 2, time: "22:00 — ВЕЧЕРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "Поздно вечером перед сном я читаю интересную книгу в кровати.", grammar: "чита́ть кни́гу (I)" },
-      { id: 16, group: 'core8', row: 3, col: 3, time: "23:00 — НОЧЬЮ", landmarkTag: "📍 Бежицкий район Брянска (ночь)", ru: "Ночью я всегда крепко сплю, потому что рано утром урок.", grammar: "спать (II: я сплю́, он спит)" }
+      // РЯД 1 (row = 0)
+      {
+        id: 1,
+        group: 'core8',
+        row: 0, col: 0,
+        time: "07:00 — УТРОМ",
+        landmarkTag: "📍 Общежитие БГТУ (Бежица)",
+        ru: "Утром я просыпаюсь по будильнику в семь часов в общежитии.",
+        en: "In the morning, I wake up to my alarm clock at seven in the dormitory.",
+        grammar: "просыпа́ться (I: я просыпа́юсь)"
+      },
+      {
+        id: 2,
+        group: 'extra8',
+        row: 0, col: 1,
+        time: "07:10 — УТРОМ",
+        landmarkTag: "📍 Ванная комната в общежитии",
+        ru: "Утром я чищу зубы в ванной перед зеркалом.",
+        en: "In the morning, I brush my teeth in the bathroom in front of the mirror.",
+        grammar: "чи́стить (II: я чи́щу, он чи́стит)"
+      },
+      {
+        id: 3,
+        group: 'extra8',
+        row: 0, col: 2,
+        time: "07:15 — УТРОМ",
+        landmarkTag: "📍 Умывальник в общежитии БГТУ",
+        ru: "Потом я умываюсь холодной водой.",
+        en: "Then I wash my face with cold water.",
+        grammar: "умыва́ться (I: я умыва́юсь)"
+      },
+      {
+        id: 4,
+        group: 'extra8',
+        row: 0, col: 3,
+        time: "07:25 — УТРОМ",
+        landmarkTag: "📍 Душевая комната в общежитии",
+        ru: "Утром я принимаю тёплый душ.",
+        en: "In the morning, I take a warm shower.",
+        grammar: "принима́ть душ (I: я принима́ю)"
+      },
+
+      // РЯД 2 (row = 1)
+      {
+        id: 5,
+        group: 'extra8',
+        row: 1, col: 0,
+        time: "07:40 — УТРОМ",
+        landmarkTag: "📍 Комната в общежитии БГТУ",
+        ru: "В комнате я одеваюсь: надеваю рубашку и брюки.",
+        en: "In the room, I get dressed: I put on a shirt and trousers.",
+        grammar: "одева́ться (I: я одева́юсь)"
+      },
+      {
+        id: 6,
+        group: 'core8',
+        row: 1, col: 1,
+        time: "08:00 — УТРОМ",
+        landmarkTag: "📍 Кухня студенческого общежития",
+        ru: "В восемь часов утра я завтракаю: ем кашу, тост и пью горячий кофе.",
+        en: "At eight o'clock in the morning I have breakfast: I eat porridge, toast and drink hot coffee.",
+        grammar: "за́втракать (I) / есть / пить"
+      },
+      {
+        id: 7,
+        group: 'core8',
+        row: 1, col: 2,
+        time: "08:30 — УТРОМ",
+        landmarkTag: "📍 Главный корпус БГТУ (бул. 50 лет Октября)",
+        ru: "Утром я иду на урок русского языка в главный корпус БГТУ.",
+        en: "In the morning, I walk to my Russian language class at the main BSTU building.",
+        grammar: "идти́ (I: я иду́, ты идёшь)"
+      },
+      {
+        id: 8,
+        group: 'core8',
+        row: 1, col: 3,
+        time: "09:00–13:00 — ДНЁМ",
+        landmarkTag: "📍 Аудитория русского языка (БГТУ)",
+        ru: "Днём на уроке в аудитории мы слушаем преподавателя и пишем в тетради.",
+        en: "During class in the auditorium, we listen to the teacher and write in our notebooks.",
+        grammar: "слу́шать (I) / писа́ть (I: мы пи́шем)"
+      },
+
+      // РЯД 3 (row = 2)
+      {
+        id: 9,
+        group: 'core8',
+        row: 2, col: 0,
+        time: "13:00 — ДНЁМ",
+        landmarkTag: "📍 Студенческая столовая БГТУ",
+        ru: "Днём в час дня я обедаю в столовой: ем суп, второе блюдо и пью чай.",
+        en: "At one o'clock in the afternoon I have lunch at the canteen: I eat soup, a main course and drink tea.",
+        grammar: "обе́дать (I: я обе́даю)"
+      },
+      {
+        id: 10,
+        group: 'core8',
+        row: 2, col: 1,
+        time: "16:00 — ДНЁМ",
+        landmarkTag: "📍 Парк-музей им. А.К. Толстого (Брянск)",
+        ru: "Днём после уроков мы гуляем и разговариваем с друзьями в парке Толстого.",
+        en: "In the afternoon after classes, we walk and talk with friends in Tolstoy Park.",
+        grammar: "гуля́ть (I) / разгова́ривать (I)"
+      },
+      {
+        id: 11,
+        group: 'core8',
+        row: 2, col: 2,
+        time: "17:30 — ВЕЧЕРОМ",
+        landmarkTag: "📍 Комната в общежитии БГТУ",
+        ru: "Вечером я сижу на диване в комнате и звоню домой по телефону.",
+        en: "In the evening, I sit on the sofa in my room and call my family by phone.",
+        grammar: "сиде́ть (II) / звони́ть (II: я звоню́)"
+      },
+      {
+        id: 12,
+        group: 'extra8',
+        row: 2, col: 3,
+        time: "18:30 — ВЕЧЕРОМ",
+        landmarkTag: "📍 Стадион БГТУ (Бежица)",
+        ru: "Вечером мы с друзьями играем в футбол на стадионе.",
+        en: "In the evening, my friends and I play football at the stadium.",
+        grammar: "игра́ть (I: мы игра́ем в футбо́л)"
+      },
+
+      // РЯД 4 (row = 3)
+      {
+        id: 13,
+        group: 'extra8',
+        row: 3, col: 0,
+        time: "19:30 — ВЕЧЕРОМ",
+        landmarkTag: "📍 Комната в общежитии БГТУ",
+        ru: "Вечером я лежу на кровати, отдыхаю и смотрю в телефон.",
+        en: "In the evening, I lie on the bed, relax and look at my phone.",
+        grammar: "лежа́ть (II: я лежу́) / отдыха́ть (I)"
+      },
+      {
+        id: 14,
+        group: 'extra8',
+        row: 3, col: 1,
+        time: "20:00 — ВЕЧЕРОМ",
+        landmarkTag: "📍 Кухня общежития (вечер)",
+        ru: "В восемь часов вечера я ужинаю на кухне в общежитии.",
+        en: "At eight o'clock in the evening, I have dinner in the dormitory kitchen.",
+        grammar: "у́жинать (I: я у́жинаю)"
+      },
+      {
+        id: 15,
+        group: 'extra8',
+        row: 3, col: 2,
+        time: "22:00 — ВЕЧЕРОМ",
+        landmarkTag: "📍 Комната в общежитии БГТУ",
+        ru: "Поздно вечером перед сном я читаю интересную книгу в кровати.",
+        en: "Late in the evening before sleeping, I read an interesting book in bed.",
+        grammar: "чита́ть (I: я чита́ю кни́гу)"
+      },
+      {
+        id: 16,
+        group: 'core8',
+        row: 3, col: 3,
+        time: "23:00 — НОЧЬЮ",
+        landmarkTag: "📍 Бежицкий район Брянска (ночь)",
+        ru: "Ночью я всегда крепко сплю, потому что рано утром урок.",
+        en: "At night, I always sleep soundly because I have an early morning class.",
+        grammar: "спать (II: я сплю́, он спит)"
+      }
     ];
 
-    let currentMode = 'core8';
+    // По умолчанию включены все 16 карточек
+    let currentMode = 'all16';
     let activePairs = [];
     let rightCardsOrder = [];
     let selectedLeftId = null;
@@ -415,7 +570,7 @@
       isSpriteAvailable = true;
       const label = document.getElementById('sprite-btn-label');
       if (label) label.textContent = "Фото ✓";
-      updateStatus("🖼️ Фото загружено! Выберите карточку слева.");
+      updateStatus("🖼️ Картинка подключена! Выберите карточку слева.");
       renderBoard();
     }
 
@@ -424,6 +579,7 @@
       if (file) applySpriteFile(file);
     }
 
+    // Точная обрезка под каждую из 16 ячеек листа
     function getCroppedRealImageHTML(item) {
       const leftPercent = -(((35 + item.col * 308) / 287) * 100).toFixed(4);
       const topPercent = -(((32 + item.row * 228) / 212) * 100).toFixed(4);
@@ -451,6 +607,7 @@
       if (!item) return;
 
       document.getElementById('zoom-modal-badge').textContent = `${item.time}`;
+      document.getElementById('zoom-modal-translation').textContent = item.en;
       const modalArt = document.getElementById('zoom-modal-art');
       modalArt.innerHTML = getCroppedRealImageHTML(item);
       document.getElementById('zoom-modal').classList.remove('hidden');
@@ -472,7 +629,7 @@
       isLockedForAnimation = false;
       rightCardsOrder = shuffleArray(activePairs);
       playAudioTone('click');
-      updateStatus("👆 Выберите любую карточку в 1-й колонке");
+      updateStatus("👆 Выберите карточку в 1-й колонке");
       renderBoard();
     }
 
@@ -567,7 +724,7 @@
       leftContainer.innerHTML = '';
       rightContainer.innerHTML = '';
 
-      if (activePairs.length === 0) activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
+      if (activePairs.length === 0) activePairs = [...ALL_16_CARDS];
       if (rightCardsOrder.length === 0) rightCardsOrder = shuffleArray(activePairs);
 
       activePairs.forEach((item, index) => {
@@ -589,7 +746,7 @@
               ${item.time}
             </span>
             <div class="flex items-center gap-1 pointer-events-auto">
-              <button onclick="openZoomModal(${item.id}, event)" class="p-1 rounded-md bg-slate-900/80 hover:bg-slate-800 text-white text-[10px] shadow" title="Увеличить">
+              <button onclick="openZoomModal(${item.id}, event)" class="p-1 rounded-md bg-slate-900/80 hover:bg-slate-800 text-white text-[10px] shadow" title="Увеличить и перевод">
                 🔍
               </button>
               <span class="text-[10px] sm:text-xs font-extrabold px-1.5 py-0.5 rounded-full shadow-md backdrop-blur-md ${isMatched ? 'bg-emerald-600/95 text-white' : 'bg-slate-900/80 text-white'}">
@@ -626,10 +783,17 @@
               </button>
             </div>
           </div>
+
           <p class="text-xs sm:text-base lg:text-lg font-extrabold leading-snug tracking-tight break-words ${isMatched ? 'text-emerald-100' : 'text-slate-900'}">
             ${item.ru}
           </p>
-          <div class="mt-2">
+
+          <!-- Перевод предложения на английский -->
+          <p class="mt-1.5 text-[11px] sm:text-xs italic leading-tight ${isMatched ? 'text-emerald-300/90' : 'text-slate-600'}">
+            🇬🇧 ${item.en}
+          </p>
+
+          <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
             <span class="text-[10px] sm:text-xs font-semibold ${isMatched ? 'text-emerald-300 bg-emerald-900/60' : 'text-slate-600 bg-slate-200/80'} px-2 py-0.5 rounded-md inline-block">
               Глагол: ${item.grammar}
             </span>
@@ -701,7 +865,7 @@
           evaluateMatch();
         } else {
           const num = displayNum || String(activePairs.findIndex(p => p.id === id) + 1).padStart(2, '0');
-          updateStatus(`Выбрана карточка #${num}. Теперь найдите подходящую фразу! ➔`);
+          updateStatus(`Выбрана карточка #${num}. Теперь найдите подходящую фразу справа! ➔`);
           renderBoard();
         }
       }
@@ -841,7 +1005,7 @@
     window.addEventListener('scroll', drawConnections);
 
     window.onload = function () {
-      activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
+      activePairs = [...ALL_16_CARDS];
       rightCardsOrder = shuffleArray(activePairs);
       checkDefaultSpriteImage();
       renderBoard();
