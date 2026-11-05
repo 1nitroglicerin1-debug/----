@@ -22,7 +22,6 @@
     .font-handwriting {
       font-family: 'Caveat', cursive;
     }
-    /* Эффект карточки на пробковой/магнитной доске */
     .pin-shadow {
       box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.35), 0 6px 8px -6px rgba(0, 0, 0, 0.25);
     }
@@ -46,7 +45,6 @@
         top: -6px;
       }
     }
-    /* Анимация ошибки */
     @keyframes shake {
       0%, 100% { transform: translateX(0); }
       20%, 60% { transform: translateX(-8px); }
@@ -57,7 +55,6 @@
       border-color: #ef4444 !important;
       background-color: #fef2f2 !important;
     }
-    /* Пульсация выбранной карточки */
     @keyframes select-pulse {
       0%, 100% { box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.9), 0 12px 24px rgba(0,0,0,0.35); }
       50% { box-shadow: 0 0 0 6px rgba(251, 191, 36, 0.55), 0 12px 24px rgba(0,0,0,0.35); }
@@ -66,7 +63,6 @@
       animation: select-pulse 1.8s infinite;
       transform: translateY(-2px);
     }
-    /* Слой линий соединения */
     #connection-layer {
       pointer-events: none;
       position: absolute;
@@ -76,7 +72,6 @@
       height: 100%;
       z-index: 20;
     }
-    /* Точная обрезка кадра из реального листа photo_2026-11-04_20-35-00.jpg (1280x960, сетка 4x4) */
     .routine-sprite-viewport {
       position: relative;
       width: 100%;
@@ -87,8 +82,8 @@
     .routine-sprite-img {
       position: absolute;
       max-width: none;
-      width: 445.993%; /* (1280 / 287) * 100% */
-      height: 452.830%; /* (960 / 212) * 100% */
+      width: 445.993%;
+      height: 452.830%;
       pointer-events: none;
       user-select: none;
       -webkit-user-drag: none;
@@ -98,125 +93,95 @@
 </head>
 <body class="text-slate-100 min-h-screen flex flex-col selection:bg-amber-400 selection:text-slate-900 pb-24 md:pb-16">
 
-  <!-- Верхняя панель навигации и управления -->
-  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/80 px-3 sm:px-6 lg:px-8 py-2.5 sm:py-3 transition-all">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2 sm:gap-4">
+  <!-- Оптимизированная шапка: на мобильных занимает 1 компактную строку -->
+  <header class="sticky top-0 z-40 bg-slate-900/95 backdrop-blur-md border-b border-slate-700/80 px-2.5 sm:px-6 py-2 transition-all">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2">
       
-      <!-- Название урока -->
-      <div class="flex items-center gap-2.5 min-w-0">
-        <div class="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-lg sm:text-xl shadow-lg shadow-amber-500/20">
+      <!-- Логотип и заголовок -->
+      <div class="flex items-center gap-2 min-w-0">
+        <div class="w-8 h-8 sm:w-10 sm:h-10 shrink-0 rounded-xl bg-gradient-to-tr from-amber-500 to-rose-500 flex items-center justify-center text-base sm:text-xl shadow-md">
           📍
         </div>
         <div class="min-w-0">
-          <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-            <h1 class="text-sm sm:text-lg lg:text-xl font-bold tracking-tight text-white truncate">
+          <div class="flex items-center gap-1.5 flex-nowrap">
+            <h1 class="text-xs sm:text-base lg:text-lg font-bold tracking-tight text-white truncate">
               Мой день в Брянске
             </h1>
-            <span class="text-[10px] sm:text-xs font-semibold px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
+            <span class="text-[9px] sm:text-xs font-semibold px-1.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 shrink-0">
               Урок 7 • А1
             </span>
           </div>
-          <p class="hidden sm:block text-xs text-slate-400 truncate">
+          <p class="hidden md:block text-[11px] text-slate-400 truncate">
             БГТУ • Бульвар 50 лет Октября • Бежицкий район
           </p>
         </div>
       </div>
 
-      <!-- Панель управления -->
-      <div class="flex items-center gap-1.5 sm:gap-2.5 flex-wrap shrink-0">
-        
-        <!-- Выбор набора карточек (8 основных / 8 дополнительных / все 16 с картинки) -->
+      <!-- Компактная панель управления -->
+      <div class="flex items-center gap-1 sm:gap-2 shrink-0">
         <label class="sr-only" for="mode-select">Режим карточек</label>
-        <select id="mode-select" onchange="changeGameMode(this.value)" class="bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-100 text-xs font-semibold rounded-xl px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-400 transition cursor-pointer">
-          <option value="core8">8 карточек (Урок 7)</option>
-          <option value="extra8">8 карточек (Доп.)</option>
-          <option value="all16">Все 16 карточек</option>
+        <select id="mode-select" onchange="changeGameMode(this.value)" class="bg-slate-800 border border-slate-600 text-slate-100 text-[11px] sm:text-xs font-semibold rounded-lg px-1.5 sm:px-2.5 py-1 sm:py-1.5 focus:outline-none focus:ring-1 focus:ring-amber-400 cursor-pointer">
+          <option value="core8">8 карточек</option>
+          <option value="extra8">8 доп.</option>
+          <option value="all16">Все 16</option>
         </select>
 
-        <!-- Счётчик правильных ответов -->
-        <div class="bg-slate-800/90 border border-slate-700 rounded-xl px-2.5 sm:px-3.5 py-1.5 flex items-center gap-1.5 shadow-inner">
-          <span class="text-amber-400 text-xs sm:text-sm">⭐</span>
-          <span class="hidden lg:inline text-xs font-medium text-slate-300">Собрано:</span>
-          <span id="score-counter" class="text-xs sm:text-sm font-extrabold text-amber-300">0 / 8</span>
+        <div class="bg-slate-800/90 border border-slate-700 rounded-lg px-2 py-1 flex items-center gap-1 shadow-inner text-[11px] sm:text-xs font-extrabold text-amber-300">
+          <span>⭐</span>
+          <span id="score-counter">0 / 8</span>
         </div>
 
-        <!-- Кнопка подгрузки оригинального файла photo_2026-11-04_20-35-00.jpg -->
         <input type="file" id="sprite-upload-input" accept="image/*" class="hidden" onchange="handleSpriteUpload(event)">
-        <button onclick="document.getElementById('sprite-upload-input').click()" id="btn-sprite-upload" class="px-2.5 py-1.5 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95" title="Загрузить photo_2026-11-04_20-35-00.jpg">
+        <button onclick="document.getElementById('sprite-upload-input').click()" id="btn-sprite-upload" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500/30 border border-amber-500/40 text-amber-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Загрузить photo_2026-11-04_20-35-00.jpg">
           <span>🖼️</span>
-          <span id="sprite-btn-label">Загрузить photo_2026-11-04_20-35-00.jpg</span>
+          <span id="sprite-btn-label" class="hidden md:inline">Загрузить фото</span>
         </button>
 
-        <!-- Вкл/выкл звуковых эффектов -->
-        <button id="btn-toggle-sound" onclick="toggleAudio()" class="p-1.5 sm:p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 hover:text-white transition" title="Включить или выключить звуковые эффекты">
-          <span id="sound-icon" class="text-sm sm:text-base">🔊</span>
+        <button id="btn-toggle-sound" onclick="toggleAudio()" class="p-1 sm:p-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-300 text-xs transition" title="Звук">
+          <span id="sound-icon">🔊</span>
         </button>
 
-        <!-- Грамматическая памятка Урока 7 -->
-        <button onclick="toggleGrammarModal()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+        <button onclick="toggleGrammarModal()" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-indigo-600/30 hover:bg-indigo-600/50 border border-indigo-500/40 text-indigo-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Грамматическая памятка">
           <span>📖</span>
-          <span class="hidden sm:inline">Глаголы Урока 7</span>
-          <span class="sm:hidden">Глаголы</span>
+          <span class="hidden sm:inline">Глаголы</span>
         </button>
 
-        <!-- Кнопка «Перемешать» -->
-        <button onclick="shuffleAndResetBoard()" class="px-2.5 sm:px-3 py-1.5 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-semibold flex items-center gap-1.5 transition active:scale-95">
+        <button onclick="shuffleAndResetBoard()" class="p-1 sm:px-2.5 sm:py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-200 text-xs font-semibold flex items-center gap-1 transition active:scale-95" title="Перемешать карточки">
           <span>🔄</span>
-          <span class="hidden sm:inline">Перемешать</span>
         </button>
       </div>
+
     </div>
   </header>
 
-  <!-- Баннер с инструкцией к заданию -->
-  <div class="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 mt-3 sm:mt-5 mb-2">
-    <div class="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-indigo-500/10 border border-slate-700/80 rounded-2xl p-3 sm:p-4 flex flex-col md:flex-row items-start md:items-center justify-between gap-3 backdrop-blur-sm">
-      <div class="flex items-start gap-2.5 sm:gap-3">
-        <span class="text-xl sm:text-2xl mt-0.5 shrink-0">🎯</span>
-        <div>
-          <div class="font-bold text-slate-100 text-xs sm:text-sm md:text-base flex flex-wrap items-center gap-2">
-            <span>Задание: «Собери мой день в Брянске»</span>
-          </div>
-          <p class="text-[11px] sm:text-xs text-slate-300 mt-1 leading-relaxed">
-            <strong class="text-amber-300">1.</strong> Нажмите на карточку с картинкой и временем суток слева. 
-            <strong class="text-sky-300">2.</strong> Выберите подходящую русскую фразу справа.
-          </p>
-        </div>
+  <!-- Блок инструкции -->
+  <div class="max-w-7xl mx-auto w-full px-3 sm:px-6 mt-2.5 mb-1.5">
+    <div class="bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-indigo-500/10 border border-slate-700/80 rounded-xl p-2.5 sm:p-3 flex items-center justify-between gap-2 backdrop-blur-sm">
+      <div class="flex items-center gap-2 min-w-0">
+        <span class="text-base sm:text-xl shrink-0">🎯</span>
+        <p class="text-[11px] sm:text-xs text-slate-300 truncate">
+          <strong class="text-amber-300">1.</strong> Картинка слева ➔ <strong class="text-sky-300">2.</strong> Фраза справа
+        </p>
       </div>
-
-      <!-- Подсказка текущего шага -->
-      <div id="selection-status" class="w-full md:w-auto text-center px-3 sm:px-4 py-2 rounded-xl bg-slate-800/90 border border-slate-700 text-[11px] sm:text-xs font-semibold text-slate-200 shrink-0">
-        👆 Выберите любую карточку в 1-й колонке
+      <div id="selection-status" class="text-[10px] sm:text-xs font-medium text-slate-300 shrink-0 bg-slate-800 px-2.5 py-1 rounded-md border border-slate-700">
+        👆 Выберите карточку в 1-й колонке
       </div>
     </div>
 
-    <!-- Баннер быстрой загрузки файла картинки, если открыто в онлайн-предпросмотре без локального файла -->
-    <div id="missing-image-banner" class="hidden mt-3 bg-amber-500/15 border-2 border-dashed border-amber-400/70 rounded-2xl p-3 sm:p-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-      <div class="text-xs sm:text-sm text-amber-100">
-        <strong>Чтобы отобразились реальные картинки из файла:</strong> перетащите сюда <code class="bg-slate-900/80 px-1.5 py-0.5 rounded text-amber-300">photo_2026-11-04_20-35-00.jpg</code> или выберите его кнопкой справа (при открытии <code class="bg-slate-900/80 px-1.5 py-0.5 rounded text-amber-300">index.html</code> из одной папки с картинкой она подгружается автоматически).
-      </div>
-      <button onclick="document.getElementById('sprite-upload-input').click()" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-extrabold text-xs shrink-0 shadow-lg transition">
-        📂 Выбрать photo_2026-11-04_20-35-00.jpg
+    <!-- Мобильные кнопки перехода -->
+    <div class="grid grid-cols-2 gap-2 mt-2 md:hidden">
+      <button onclick="scrollToColumn('left')" class="py-1.5 px-2 rounded-lg bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition">
+        <span>1. Картинки</span> ↑
       </button>
-    </div>
-
-    <!-- Кнопки быстрого перехода для мобильных экранов (< 768px) -->
-    <div class="grid grid-cols-2 gap-2 mt-3 md:hidden">
-      <button onclick="scrollToColumn('left')" class="py-2 px-3 rounded-xl bg-amber-500/20 border border-amber-500/40 text-amber-200 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition">
-        <span>1. Картинки</span>
-        <span>↑</span>
-      </button>
-      <button onclick="scrollToColumn('right')" class="py-2 px-3 rounded-xl bg-sky-500/20 border border-sky-500/40 text-sky-200 text-xs font-bold flex items-center justify-center gap-1.5 active:scale-95 transition">
-        <span>2. Русские фразы</span>
-        <span>↓</span>
+      <button onclick="scrollToColumn('right')" class="py-1.5 px-2 rounded-lg bg-sky-500/20 border border-sky-500/40 text-sky-200 text-xs font-semibold flex items-center justify-center gap-1 active:scale-95 transition">
+        <span>2. Русские фразы</span> ↓
       </button>
     </div>
   </div>
 
-  <!-- Основная рабочая область доски -->
-  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 lg:px-8 mt-2 sm:mt-4 flex-1 relative">
+  <!-- Рабочая область доски -->
+  <main class="max-w-7xl mx-auto w-full px-3 sm:px-6 mt-2 flex-1 relative">
     
-    <!-- Слой линий между соединёнными карточками (для ПК и планшетов) -->
     <svg id="connection-layer" class="hidden md:block">
       <defs>
         <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
@@ -225,62 +190,55 @@
       </defs>
     </svg>
 
-    <!-- Две колонки: Слева — Картинки (только время суток + картинка на всю карточку), Справа — Русские фразы -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 lg:gap-14 relative z-10 items-start">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 lg:gap-10 relative z-10 items-start">
       
-      <!-- ЛЕВАЯ КОЛОНКА: Время суток и картинка на всю карточку -->
-      <div id="left-column-section" class="scroll-mt-20">
-        <div class="flex items-center justify-between mb-3 sm:mb-4 pb-2 border-b border-amber-500/30">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-amber-400"></span>
-            <h2 class="font-bold text-xs sm:text-sm lg:text-base text-amber-200 tracking-wide uppercase">
+      <!-- ЛЕВАЯ КОЛОНКА -->
+      <div id="left-column-section" class="scroll-mt-14">
+        <div class="flex items-center justify-between mb-2.5 pb-1.5 border-b border-amber-500/30">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-amber-400"></span>
+            <h2 class="font-bold text-xs sm:text-sm text-amber-200 tracking-wide uppercase">
               1. Время суток и картинка
             </h2>
           </div>
-          <span class="text-slate-400 font-handwriting text-base sm:text-lg">Мой день</span>
+          <span class="text-slate-400 font-handwriting text-sm sm:text-base">Мой день</span>
         </div>
-
-        <div id="left-cards-container" class="space-y-4 sm:space-y-5">
-          <!-- Генерируется через JS -->
-        </div>
+        <div id="left-cards-container" class="space-y-3 sm:space-y-4"></div>
       </div>
 
-      <!-- ПРАВАЯ КОЛОНКА: Русские фразы -->
-      <div id="right-column-section" class="scroll-mt-20">
-        <div class="flex items-center justify-between mb-3 sm:mb-4 pb-2 border-b border-sky-500/30">
-          <div class="flex items-center gap-2">
-            <span class="w-2.5 h-2.5 sm:w-3 sm:h-3 rounded-full bg-sky-400"></span>
-            <h2 class="font-bold text-xs sm:text-sm lg:text-base text-sky-200 tracking-wide uppercase">
+      <!-- ПРАВАЯ КОЛОНКА -->
+      <div id="right-column-section" class="scroll-mt-14">
+        <div class="flex items-center justify-between mb-2.5 pb-1.5 border-b border-sky-500/30">
+          <div class="flex items-center gap-1.5">
+            <span class="w-2.5 h-2.5 rounded-full bg-sky-400"></span>
+            <h2 class="font-bold text-xs sm:text-sm text-sky-200 tracking-wide uppercase">
               2. Русская фраза (Брянск • БГТУ)
             </h2>
           </div>
-          <span class="text-slate-400 font-handwriting text-base sm:text-lg">Город Брянск</span>
+          <span class="text-slate-400 font-handwriting text-sm sm:text-base">Город Брянск</span>
         </div>
-
-        <div id="right-cards-container" class="space-y-4 sm:space-y-5">
-          <!-- Генерируется через JS -->
-        </div>
+        <div id="right-cards-container" class="space-y-3 sm:space-y-4"></div>
       </div>
 
     </div>
   </main>
 
-  <!-- Мобильная нижняя панель при выбранной карточке -->
+  <!-- Мобильная плашка активного выбора -->
   <div id="mobile-selection-bar" class="fixed bottom-3 inset-x-3 z-40 md:hidden hidden">
-    <div class="bg-slate-900/95 backdrop-blur-md border-2 border-amber-400/80 rounded-2xl p-3 shadow-2xl flex items-center justify-between gap-2">
+    <div class="bg-slate-900/95 backdrop-blur-md border border-amber-400/80 rounded-xl p-2.5 shadow-2xl flex items-center justify-between gap-2">
       <div class="min-w-0 flex-1">
-        <div id="mobile-bar-title" class="text-xs font-extrabold text-amber-300 truncate">
+        <div id="mobile-bar-title" class="text-xs font-bold text-amber-300 truncate">
           Выбрана карточка #01
         </div>
-        <div id="mobile-bar-subtitle" class="text-[11px] text-slate-300 truncate">
+        <div id="mobile-bar-subtitle" class="text-[10px] text-slate-300 truncate">
           Выберите подходящую фразу во 2-й колонке
         </div>
       </div>
       <div class="flex items-center gap-1.5 shrink-0">
-        <button id="mobile-bar-jump-btn" onclick="jumpToOppositeColumn()" class="px-3 py-1.5 rounded-xl bg-amber-500 text-slate-950 font-bold text-xs shadow">
+        <button id="mobile-bar-jump-btn" onclick="jumpToOppositeColumn()" class="px-2.5 py-1 rounded-lg bg-amber-500 text-slate-950 font-bold text-xs shadow">
           К паре ↕
         </button>
-        <button onclick="clearSelection()" class="p-1.5 rounded-xl bg-slate-800 text-slate-300 hover:text-white border border-slate-700 text-xs" title="Отменить выбор">
+        <button onclick="clearSelection()" class="p-1 rounded-lg bg-slate-800 text-slate-300 border border-slate-700 text-xs" title="Отменить выбор">
           ✕
         </button>
       </div>
@@ -298,41 +256,36 @@
           ✕
         </button>
       </div>
-      <div id="zoom-modal-art" class="w-full aspect-[280/202] illustration-frame">
-        <!-- Крупная картинка -->
-      </div>
+      <div id="zoom-modal-art" class="w-full aspect-[287/212] overflow-hidden rounded-xl border border-amber-300 relative bg-amber-100"></div>
       <div class="mt-3 text-center">
-        <p id="zoom-modal-question" class="text-sm sm:text-base font-extrabold text-slate-800">
+        <p class="text-sm sm:text-base font-extrabold text-slate-800">
           Что делает студент в это время?
         </p>
       </div>
     </div>
   </div>
 
-  <!-- Грамматическая памятка (100% на русском языке, без иностранных слов) -->
-  <div id="grammar-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-slate-900 border border-slate-700 rounded-3xl max-w-3xl w-full p-6 lg:p-8 shadow-2xl relative max-h-[90vh] overflow-y-auto">
-      
-      <button onclick="toggleGrammarModal()" class="absolute top-5 right-5 w-8 h-8 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center">
+  <!-- Модальное окно грамматики -->
+  <div id="grammar-modal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-3 sm:p-4">
+    <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-4 sm:p-6 shadow-2xl relative max-h-[88vh] overflow-y-auto">
+      <button onclick="toggleGrammarModal()" class="absolute top-4 right-4 w-7 h-7 rounded-full bg-slate-800 text-slate-400 hover:text-white flex items-center justify-center text-sm">
         ✕
       </button>
 
-      <div class="flex items-center gap-3 mb-6">
-        <div class="text-3xl">📚</div>
+      <div class="flex items-center gap-2.5 mb-4">
+        <div class="text-2xl">📚</div>
         <div>
-          <h3 class="text-xl font-bold text-white">Учебник «Дорога в Россию» • Урок 7</h3>
-          <p class="text-xs text-slate-400">Грамматическая памятка: глаголы распорядка дня и время суток</p>
+          <h3 class="text-base sm:text-lg font-bold text-white">Учебник «Дорога в Россию» • Урок 7</h3>
+          <p class="text-[11px] text-slate-400">Грамматическая памятка: глаголы распорядка дня и время суток</p>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
-        
-        <!-- I спряжение -->
-        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
-          <h4 class="font-bold text-amber-300 text-sm mb-2 flex items-center gap-1.5">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-[11px] sm:text-xs">
+        <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-amber-300 mb-1 flex items-center gap-1">
             <span>🔹</span> I спряжение (ЧИТАТЬ / ДЕЛАТЬ / УМЫВАТЬСЯ)
           </h4>
-          <ul class="space-y-1 text-slate-300">
+          <ul class="space-y-0.5 text-slate-300">
             <li><strong>Я</strong> чита́-<strong>ю</strong> / де́ла-<strong>ю</strong> / умыва́-<strong>юсь</strong></li>
             <li><strong>Ты</strong> чита́-<strong>ешь</strong> / де́ла-<strong>ешь</strong> / умыва́-<strong>ешься</strong></li>
             <li><strong>Он / Она</strong> чита́-<strong>ет</strong> / де́ла-<strong>ет</strong> / умыва́-<strong>ется</strong></li>
@@ -340,15 +293,13 @@
             <li><strong>Вы</strong> чита́-<strong>ете</strong> / де́ла-<strong>ете</strong> / умыва́-<strong>етесь</strong></li>
             <li><strong>Они</strong> чита́-<strong>ют</strong> / де́ла-<strong>ют</strong> / умыва́-<strong>ются</strong></li>
           </ul>
-          <p class="mt-2 text-slate-400 italic">Сюда же: просыпаться, одеваться, завтракать, обедать, ужинать, гулять, отдыхать, играть, принимать душ.</p>
         </div>
 
-        <!-- II спряжение -->
-        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
-          <h4 class="font-bold text-sky-300 text-sm mb-2 flex items-center gap-1.5">
+        <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-sky-300 mb-1 flex items-center gap-1">
             <span>🔹</span> II спряжение (УЧИТЬ / ЗВОНИТЬ / ЧИСТИТЬ)
           </h4>
-          <ul class="space-y-1 text-slate-300">
+          <ul class="space-y-0.5 text-slate-300">
             <li><strong>Я</strong> уч-<strong>у́</strong> / звон-<strong>ю́</strong> / чи́щ-<strong>у</strong> / сп-<strong>лю́</strong></li>
             <li><strong>Ты</strong> у́ч-<strong>ишь</strong> / звон-<strong>и́шь</strong> / чи́ст-<strong>ишь</strong> / сп-<strong>и́шь</strong></li>
             <li><strong>Он / Она</strong> у́ч-<strong>ит</strong> / звон-<strong>и́т</strong> / чи́ст-<strong>ит</strong> / сп-<strong>и́т</strong></li>
@@ -356,233 +307,81 @@
             <li><strong>Вы</strong> у́ч-<strong>ите</strong> / звон-<strong>и́те</strong> / чи́ст-<strong>ите</strong> / сп-<strong>и́те</strong></li>
             <li><strong>Они</strong> у́ч-<strong>ат</strong> / звон-<strong>я́т</strong> / чи́ст-<strong>ят</strong> / сп-<strong>я́т</strong></li>
           </ul>
-          <p class="mt-2 text-slate-400 italic">Обратите внимание на 1-е лицо: чистить ➔ я чи́<strong>щ</strong>у, готовить ➔ я гото́<strong>вл</strong>ю, спать ➔ я сп<strong>лю́</strong>.</p>
         </div>
 
-        <!-- Когда? (Время суток) -->
-        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
-          <h4 class="font-bold text-emerald-300 text-sm mb-2 flex items-center gap-1.5">
-            <span>⏰</span> Когда? (Время суток и часы)
+        <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-emerald-300 mb-1 flex items-center gap-1">
+            <span>⏰</span> Когда? (Время суток)
           </h4>
-          <div class="grid grid-cols-2 gap-2 text-slate-300">
-            <div>🌅 <strong class="text-white">у́тром</strong> (06:00 – 11:00)</div>
-            <div>☀️ <strong class="text-white">днём</strong> (12:00 – 17:00)</div>
-            <div>🌆 <strong class="text-white">ве́чером</strong> (18:00 – 22:00)</div>
-            <div>🌙 <strong class="text-white">но́чью</strong> (23:00 – 05:00)</div>
-          </div>
-          <p class="mt-2 text-slate-400">Последовательность действий: <strong>снача́ла</strong> ➔ <strong>пото́м</strong> ➔ <strong>по́сле э́того</strong>.</p>
-        </div>
-
-        <!-- Как часто? -->
-        <div class="bg-slate-800/60 p-4 rounded-2xl border border-slate-700">
-          <h4 class="font-bold text-rose-300 text-sm mb-2 flex items-center gap-1.5">
-            <span>📊</span> Как часто? (Повторяемость действия)
-          </h4>
-          <div class="space-y-1 text-slate-300">
-            <div><strong>всегда́ / ка́ждый день</strong> (100% — постоянно)</div>
-            <div><strong>обы́чно</strong> (80% — в большинство дней)</div>
-            <div><strong>ча́сто</strong> (60% — много раз)</div>
-            <div><strong>иногда́</strong> (30% — время от времени)</div>
-            <div><strong>ре́дко</strong> (10% — мало раз)</div>
-            <div><strong>никогда́ не...</strong> (0% — действие не совершается)</div>
+          <div class="grid grid-cols-2 gap-1 text-slate-300">
+            <div>🌅 <strong>у́тром</strong> (06:00–11:00)</div>
+            <div>☀️ <strong>днём</strong> (12:00–17:00)</div>
+            <div>🌆 <strong>ве́чером</strong> (18:00–22:00)</div>
+            <div>🌙 <strong>но́чью</strong> (23:00–05:00)</div>
           </div>
         </div>
 
+        <div class="bg-slate-800/60 p-3 rounded-xl border border-slate-700">
+          <h4 class="font-bold text-rose-300 mb-1 flex items-center gap-1">
+            <span>📊</span> Как часто?
+          </h4>
+          <div class="space-y-0.5 text-slate-300">
+            <div><strong>всегда́ / ка́ждый день</strong> (100%)</div>
+            <div><strong>обы́чно</strong> (80%) | <strong>ча́сто</strong> (60%)</div>
+            <div><strong>иногда́</strong> (30%) | <strong>ре́дко</strong> (10%)</div>
+            <div><strong>никогда́ не...</strong> (0%)</div>
+          </div>
+        </div>
       </div>
 
-      <div class="mt-6 text-center">
-        <button onclick="toggleGrammarModal()" class="px-6 py-2.5 rounded-xl bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-xs transition">
+      <div class="mt-4 text-center">
+        <button onclick="toggleGrammarModal()" class="px-5 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 font-semibold text-white text-xs transition">
           Вернуться к доске
         </button>
       </div>
-
     </div>
   </div>
 
-  <!-- Модальное окно победы (100% на русском языке) -->
+  <!-- Модальное окно победы -->
   <div id="win-modal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-md z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-500/50 rounded-3xl max-w-md w-full p-8 text-center shadow-2xl relative">
-      <div class="text-6xl mb-3 animate-bounce">🎉</div>
-      <h3 class="text-2xl font-extrabold text-amber-300 mb-1">Отличная работа!</h3>
-      <p class="text-sm font-semibold text-emerald-300 mb-3">Все картинки и фразы соединены верно!</p>
-      <p class="text-xs text-slate-300 mb-6 leading-relaxed">
-        Вы правильно сопоставили иллюстрации распорядка дня с русскими предложениями. Теперь вы можете рассказать о своём дне в Брянске и учёбе в БГТУ!
+    <div class="bg-gradient-to-b from-slate-900 to-slate-950 border border-amber-500/50 rounded-2xl max-w-sm w-full p-6 text-center shadow-2xl">
+      <div class="text-5xl mb-2">🎉</div>
+      <h3 class="text-xl font-extrabold text-amber-300 mb-1">Отличная работа!</h3>
+      <p class="text-xs font-semibold text-emerald-300 mb-2">Все картинки и фразы соединены верно!</p>
+      <p class="text-[11px] text-slate-300 mb-5 leading-relaxed">
+        Вы сопоставили все действия с правильными предложениями и готовы рассказать о своём дне в Брянске!
       </p>
-
-      <div class="flex flex-wrap gap-3 justify-center">
-        <button onclick="shuffleAndResetBoard(); toggleWinModal(false);" class="px-5 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg shadow-amber-500/20 transition">
-          Перемешать и сыграть ещё раз
+      <div class="flex gap-2 justify-center">
+        <button onclick="shuffleAndResetBoard(); toggleWinModal(false);" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition">
+          Сыграть ещё раз
         </button>
-        <button onclick="toggleWinModal(false)" class="px-5 py-2.5 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-medium text-xs border border-slate-700 transition">
+        <button onclick="toggleWinModal(false)" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs border border-slate-700 transition">
           Закрыть
         </button>
       </div>
     </div>
   </div>
 
-  <!-- Логика приложения -->
   <script>
-    /**
-     * Все 16 карточек из реального файла photo_2026-11-04_20-35-00.jpg (размер 1280 x 960, сетка 4x4: col = 0..3, row = 0..3)
-     * Точные координаты внутренней рамки каждой иллюстрации:
-     * x = 35 + col * 308, width = 287
-     * y = 32 + row * 228, height = 212
-     */
     const ALL_16_CARDS = [
-      // РЯД 1 (row = 0)
-      {
-        id: 1,
-        group: 'core8',
-        row: 0, col: 0,
-        time: "07:00 — УТРОМ",
-        landmarkTag: "📍 Общежитие БГТУ (Бежица)",
-        ru: "Утром я просыпаюсь по будильнику в семь часов в общежитии.",
-        grammar: "просыпа́ться (I)"
-      },
-      {
-        id: 2,
-        group: 'extra8',
-        row: 0, col: 1,
-        time: "07:10 — УТРОМ",
-        landmarkTag: "📍 Ванная комната в общежитии",
-        ru: "Утром я чищу зубы в ванной перед зеркалом.",
-        grammar: "чи́стить (II: я чи́щу)"
-      },
-      {
-        id: 3,
-        group: 'extra8',
-        row: 0, col: 2,
-        time: "07:15 — УТРОМ",
-        landmarkTag: "📍 Умывальник в общежитии БГТУ",
-        ru: "Потом я умываюсь холодной водой.",
-        grammar: "умыва́ться (I)"
-      },
-      {
-        id: 4,
-        group: 'extra8',
-        row: 0, col: 3,
-        time: "07:25 — УТРОМ",
-        landmarkTag: "📍 Душевая в студенческом общежитии",
-        ru: "Утром я принимаю тёплый душ.",
-        grammar: "принима́ть душ (I)"
-      },
-
-      // РЯД 2 (row = 1)
-      {
-        id: 5,
-        group: 'extra8',
-        row: 1, col: 0,
-        time: "07:40 — УТРОМ",
-        landmarkTag: "📍 Комната в общежитии БГТУ",
-        ru: "В комнате я одеваюсь: надеваю рубашку и брюки.",
-        grammar: "одева́ться (I) / надева́ть (I)"
-      },
-      {
-        id: 6,
-        group: 'core8',
-        row: 1, col: 1,
-        time: "08:00 — УТРОМ",
-        landmarkTag: "📍 Кухня студенческого общежития",
-        ru: "В восемь часов утра я завтракаю: ем кашу, тост и пью горячий кофе.",
-        grammar: "за́втракать (I) / есть / пить (I)"
-      },
-      {
-        id: 7,
-        group: 'core8',
-        row: 1, col: 2,
-        time: "08:30 — УТРОМ",
-        landmarkTag: "📍 Главный корпус БГТУ (бул. 50 лет Октября)",
-        ru: "Утром я иду на урок русского языка в главный корпус БГТУ.",
-        grammar: "идти́ (I: я иду́)"
-      },
-      {
-        id: 8,
-        group: 'core8',
-        row: 1, col: 3,
-        time: "09:00–13:00 — ДНЁМ",
-        landmarkTag: "📍 Аудитория русского языка (БГТУ)",
-        ru: "Днём на уроке в аудитории мы слушаем преподавателя и пишем в тетради.",
-        grammar: "слу́шать (I) / писа́ть (I)"
-      },
-
-      // РЯД 3 (row = 2)
-      {
-        id: 9,
-        group: 'core8',
-        row: 2, col: 0,
-        time: "13:00 — ДНЁМ",
-        landmarkTag: "📍 Студенческая столовая БГТУ",
-        ru: "Днём в час дня я обедаю в столовой: ем суп, второе блюдо и пью чай.",
-        grammar: "обе́дать (I) / есть / пить (I)"
-      },
-      {
-        id: 10,
-        group: 'core8',
-        row: 2, col: 1,
-        time: "16:00 — ДНЁМ",
-        landmarkTag: "📍 Парк-музей им. А.К. Толстого (Брянск)",
-        ru: "Днём после уроков мы гуляем и разговариваем с друзьями в парке Толстого.",
-        grammar: "гуля́ть (I) / разгова́ривать (I)"
-      },
-      {
-        id: 11,
-        group: 'core8',
-        row: 2, col: 2,
-        time: "17:30 — ВЕЧЕРОМ",
-        landmarkTag: "📍 Комната в общежитии БГТУ",
-        ru: "Вечером я сижу на диване в комнате и звоню домой по телефону.",
-        grammar: "сиде́ть (II) / звони́ть (II)"
-      },
-      {
-        id: 12,
-        group: 'extra8',
-        row: 2, col: 3,
-        time: "18:30 — ВЕЧЕРОМ",
-        landmarkTag: "📍 Стадион БГТУ (Бежица)",
-        ru: "Вечером мы с друзьями играем в футбол на стадионе.",
-        grammar: "игра́ть в футбо́л (I)"
-      },
-
-      // РЯД 4 (row = 3)
-      {
-        id: 13,
-        group: 'extra8',
-        row: 3, col: 0,
-        time: "19:30 — ВЕЧЕРОМ",
-        landmarkTag: "📍 Комната в общежитии БГТУ",
-        ru: "Вечером я лежу на кровати, отдыхаю и смотрю в телефон.",
-        grammar: "лежа́ть (II) / отдыха́ть (I)"
-      },
-      {
-        id: 14,
-        group: 'extra8',
-        row: 3, col: 1,
-        time: "20:00 — ВЕЧЕРОМ",
-        landmarkTag: "📍 Кухня общежития (вечер)",
-        ru: "В восемь часов вечера я ужинаю на кухне в общежитии.",
-        grammar: "у́жинать (I: я у́жинаю)"
-      },
-      {
-        id: 15,
-        group: 'extra8',
-        row: 3, col: 2,
-        time: "22:00 — ВЕЧЕРОМ",
-        landmarkTag: "📍 Комната в общежитии БГТУ",
-        ru: "Поздно вечером перед сном я читаю интересную книгу в кровати.",
-        grammar: "чита́ть кни́гу (I)"
-      },
-      {
-        id: 16,
-        group: 'core8',
-        row: 3, col: 3,
-        time: "23:00 — НОЧЬЮ",
-        landmarkTag: "📍 Бежицкий район Брянска (ночь)",
-        ru: "Ночью я всегда крепко сплю, потому что рано утром урок.",
-        grammar: "спать (II: я сплю́, он спит)"
-      }
+      { id: 1, group: 'core8', row: 0, col: 0, time: "07:00 — УТРОМ", landmarkTag: "📍 Общежитие БГТУ (Бежица)", ru: "Утром я просыпаюсь по будильнику в семь часов в общежитии.", grammar: "просыпа́ться (I)" },
+      { id: 2, group: 'extra8', row: 0, col: 1, time: "07:10 — УТРОМ", landmarkTag: "📍 Ванная комната в общежитии", ru: "Утром я чищу зубы в ванной перед зеркалом.", grammar: "чи́стить (II: я чи́щу)" },
+      { id: 3, group: 'extra8', row: 0, col: 2, time: "07:15 — УТРОМ", landmarkTag: "📍 Умывальник в общежитии БГТУ", ru: "Потом я умываюсь холодной водой.", grammar: "умыва́ться (I)" },
+      { id: 4, group: 'extra8', row: 0, col: 3, time: "07:25 — УТРОМ", landmarkTag: "📍 Душевая в студенческом общежитии", ru: "Утром я принимаю тёплый душ.", grammar: "принима́ть душ (I)" },
+      { id: 5, group: 'extra8', row: 1, col: 0, time: "07:40 — УТРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "В комнате я одеваюсь: надеваю рубашку и брюки.", grammar: "одева́ться (I) / надева́ть (I)" },
+      { id: 6, group: 'core8', row: 1, col: 1, time: "08:00 — УТРОМ", landmarkTag: "📍 Кухня студенческого общежития", ru: "В восемь часов утра я завтракаю: ем кашу, тост и пью горячий кофе.", grammar: "за́втракать (I) / есть / пить (I)" },
+      { id: 7, group: 'core8', row: 1, col: 2, time: "08:30 — УТРОМ", landmarkTag: "📍 Главный корпус БГТУ (бул. 50 лет Октября)", ru: "Утром я иду на урок русского языка в главный корпус БГТУ.", grammar: "идти́ (I: я иду́)" },
+      { id: 8, group: 'core8', row: 1, col: 3, time: "09:00–13:00 — ДНЁМ", landmarkTag: "📍 Аудитория русского языка (БГТУ)", ru: "Днём на уроке в аудитории мы слушаем преподавателя и пишем в тетради.", grammar: "слу́шать (I) / писа́ть (I)" },
+      { id: 9, group: 'core8', row: 2, col: 0, time: "13:00 — ДНЁМ", landmarkTag: "📍 Студенческая столовая БГТУ", ru: "Днём в час дня я обедаю в столовой: ем суп, второе блюдо и пью чай.", grammar: "обе́дать (I) / есть / пить (I)" },
+      { id: 10, group: 'core8', row: 2, col: 1, time: "16:00 — ДНЁМ", landmarkTag: "📍 Парк-музей им. А.К. Толстого (Брянск)", ru: "Днём после уроков мы гуляем и разговариваем с друзьями в парке Толстого.", grammar: "гуля́ть (I) / разгова́ривать (I)" },
+      { id: 11, group: 'core8', row: 2, col: 2, time: "17:30 — ВЕЧЕРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "Вечером я сижу на диване в комнате и звоню домой по телефону.", grammar: "сиде́ть (II) / звони́ть (II)" },
+      { id: 12, group: 'extra8', row: 2, col: 3, time: "18:30 — ВЕЧЕРОМ", landmarkTag: "📍 Стадион БГТУ (Бежица)", ru: "Вечером мы с друзьями играем в футбол на стадионе.", grammar: "игра́ть в футбо́л (I)" },
+      { id: 13, group: 'extra8', row: 3, col: 0, time: "19:30 — ВЕЧЕРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "Вечером я лежу на кровати, отдыхаю и смотрю в телефон.", grammar: "лежа́ть (II) / отдыха́ть (I)" },
+      { id: 14, group: 'extra8', row: 3, col: 1, time: "20:00 — ВЕЧЕРОМ", landmarkTag: "📍 Кухня общежития (вечер)", ru: "В восемь часов вечера я ужинаю на кухне в общежитии.", grammar: "у́жинать (I: я у́жинаю)" },
+      { id: 15, group: 'extra8', row: 3, col: 2, time: "22:00 — ВЕЧЕРОМ", landmarkTag: "📍 Комната в общежитии БГТУ", ru: "Поздно вечером перед сном я читаю интересную книгу в кровати.", grammar: "чита́ть кни́гу (I)" },
+      { id: 16, group: 'core8', row: 3, col: 3, time: "23:00 — НОЧЬЮ", landmarkTag: "📍 Бежицкий район Брянска (ночь)", ru: "Ночью я всегда крепко сплю, потому что рано утром урок.", grammar: "спать (II: я сплю́, он спит)" }
     ];
 
-    // Состояние игры
     let currentMode = 'core8';
     let activePairs = [];
     let rightCardsOrder = [];
@@ -592,42 +391,31 @@
     let isLockedForAnimation = false;
     let isSoundMuted = false;
     let audioContext = null;
-
-    // Путь к реальному файлу с 16 картинками
     let spriteImageSrc = "photo_2026-11-04_20-35-00.jpg";
     let isSpriteAvailable = true;
 
-    // Проверяем, доступен ли файл photo_2026-11-04_20-35-00.jpg автоматически в текущей папке
     function checkDefaultSpriteImage() {
       const probe = new Image();
       probe.onload = function () {
         isSpriteAvailable = true;
-        const banner = document.getElementById('missing-image-banner');
-        if (banner) banner.classList.add('hidden');
         const label = document.getElementById('sprite-btn-label');
-        if (label) label.textContent = "Картинка подключена ✓";
+        if (label) label.textContent = "Фото ✓";
         renderBoard();
       };
       probe.onerror = function () {
         isSpriteAvailable = false;
-        const banner = document.getElementById('missing-image-banner');
-        if (banner) banner.classList.remove('hidden');
         renderBoard();
       };
       probe.src = spriteImageSrc;
     }
 
-    // Применение выбранного или перетащенного пользователем файла photo_2026-11-04_20-35-00.jpg
     function applySpriteFile(file) {
       if (!file) return;
-      const objectUrl = URL.createObjectURL(file);
-      spriteImageSrc = objectUrl;
+      spriteImageSrc = URL.createObjectURL(file);
       isSpriteAvailable = true;
-      const banner = document.getElementById('missing-image-banner');
-      if (banner) banner.classList.add('hidden');
       const label = document.getElementById('sprite-btn-label');
-      if (label) label.textContent = "Картинка загружена ✓";
-      updateStatus("🖼️ Картинка загружена! Выберите карточку слева.");
+      if (label) label.textContent = "Фото ✓";
+      updateStatus("🖼️ Фото загружено! Выберите карточку слева.");
       renderBoard();
     }
 
@@ -636,30 +424,15 @@
       if (file) applySpriteFile(file);
     }
 
-    // Поддержка перетаскивания файла картинки (Drag & Drop) прямо на страницу
-    window.addEventListener('dragover', function (e) {
-      e.preventDefault();
-    });
-    window.addEventListener('drop', function (e) {
-      e.preventDefault();
-      if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
-        const file = e.dataTransfer.files[0];
-        if (file.type.startsWith('image/')) {
-          applySpriteFile(file);
-        }
-      }
-    });
-
-    // HTML-блок реальной вырезанной картинки на всю карточку (без каких-либо SVG-рисунков и без текста)
     function getCroppedRealImageHTML(item) {
       const leftPercent = -(((35 + item.col * 308) / 287) * 100).toFixed(4);
       const topPercent = -(((32 + item.row * 228) / 212) * 100).toFixed(4);
 
       if (!isSpriteAvailable) {
         return `
-          <div class="routine-sprite-viewport flex flex-col items-center justify-center p-4 text-center bg-slate-800/90">
-            <button onclick="event.stopPropagation(); document.getElementById('sprite-upload-input').click();" class="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow-lg transition">
-              🖼️ Выбрать photo_2026-11-04_20-35-00.jpg
+          <div class="routine-sprite-viewport flex flex-col items-center justify-center p-3 text-center bg-slate-800/90">
+            <button onclick="event.stopPropagation(); document.getElementById('sprite-upload-input').click();" class="px-3 py-1.5 rounded-lg bg-amber-500 hover:bg-amber-400 text-slate-950 font-bold text-xs shadow transition">
+              🖼️ Выбрать photo
             </button>
           </div>
         `;
@@ -667,44 +440,48 @@
 
       return `
         <div class="routine-sprite-viewport">
-          <img
-            src="${spriteImageSrc}"
-            alt=""
-            class="routine-sprite-img"
-            style="left: ${leftPercent}%; top: ${topPercent}%;"
-          />
+          <img src="${spriteImageSrc}" alt="" class="routine-sprite-img" style="left: ${leftPercent}%; top: ${topPercent}%;" />
         </div>
       `;
     }
 
-    // Переключение режима (8 основных / 8 дополнительных / все 16)
+    function openZoomModal(id, event) {
+      if (event) event.stopPropagation();
+      const item = ALL_16_CARDS.find(c => c.id === id);
+      if (!item) return;
+
+      document.getElementById('zoom-modal-badge').textContent = `${item.time}`;
+      const modalArt = document.getElementById('zoom-modal-art');
+      modalArt.innerHTML = getCroppedRealImageHTML(item);
+      document.getElementById('zoom-modal').classList.remove('hidden');
+    }
+
+    function closeZoomModal() {
+      document.getElementById('zoom-modal').classList.add('hidden');
+    }
+
     function changeGameMode(mode) {
       currentMode = mode;
-      if (mode === 'core8') {
-        activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
-      } else if (mode === 'extra8') {
-        activePairs = ALL_16_CARDS.filter(c => c.group === 'extra8');
-      } else {
-        activePairs = [...ALL_16_CARDS];
-      }
+      if (mode === 'core8') activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
+      else if (mode === 'extra8') activePairs = ALL_16_CARDS.filter(c => c.group === 'extra8');
+      else activePairs = [...ALL_16_CARDS];
+
       matchedPairIds = [];
       selectedLeftId = null;
       selectedRightId = null;
       isLockedForAnimation = false;
       rightCardsOrder = shuffleArray(activePairs);
       playAudioTone('click');
-      updateStatus(`👆 Выберите любую карточку в 1-й колонке`);
+      updateStatus("👆 Выберите любую карточку в 1-й колонке");
       renderBoard();
     }
 
-    // Звуковой синтезатор Web Audio API
     function playAudioTone(type) {
       if (isSoundMuted) return;
       try {
         const AudioCtx = window.AudioContext || window.webkitAudioContext;
         if (!audioContext) audioContext = new AudioCtx();
         if (audioContext.state === 'suspended') audioContext.resume();
-
         const now = audioContext.currentTime;
 
         if (type === 'click') {
@@ -712,7 +489,6 @@
           const gain = audioContext.createGain();
           osc.type = 'sine';
           osc.frequency.setValueAtTime(440, now);
-          osc.frequency.exponentialRampToValueAtTime(300, now + 0.05);
           gain.gain.setValueAtTime(0.08, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.05);
           osc.connect(gain);
@@ -720,8 +496,7 @@
           osc.start(now);
           osc.stop(now + 0.06);
         } else if (type === 'match') {
-          const notes = [523.25, 659.25, 783.99, 1046.50];
-          notes.forEach((freq, idx) => {
+          [523.25, 659.25, 783.99, 1046.50].forEach((freq, idx) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.type = 'triangle';
@@ -738,7 +513,6 @@
           const gain = audioContext.createGain();
           osc.type = 'sawtooth';
           osc.frequency.setValueAtTime(170, now);
-          osc.frequency.exponentialRampToValueAtTime(110, now + 0.22);
           gain.gain.setValueAtTime(0.09, now);
           gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
           osc.connect(gain);
@@ -746,8 +520,7 @@
           osc.start(now);
           osc.stop(now + 0.23);
         } else if (type === 'win') {
-          const notes = [440, 554.37, 659.25, 880, 1108.73];
-          notes.forEach((freq, idx) => {
+          [440, 554.37, 659.25, 880].forEach((freq, idx) => {
             const osc = audioContext.createOscillator();
             const gain = audioContext.createGain();
             osc.type = 'sine';
@@ -760,12 +533,9 @@
             osc.stop(now + idx * 0.12 + 0.55);
           });
         }
-      } catch (e) {
-        console.warn('Звуковой эффект недоступен', e);
-      }
+      } catch (e) {}
     }
 
-    // Озвучивание русской фразы
     function speakRussian(text, event) {
       if (event) event.stopPropagation();
       if ('speechSynthesis' in window) {
@@ -791,23 +561,15 @@
       return arr;
     }
 
-    // Отрисовка доски:
-    // СЛЕВА — только картинка на всю карточку + плашка времени и времени суток (07:00 — УТРОМ) и номер (#01). Никакого другого текста.
-    // СПРАВА — русская фраза, локация Брянска, озвучка и глагол.
     function renderBoard() {
       const leftContainer = document.getElementById('left-cards-container');
       const rightContainer = document.getElementById('right-cards-container');
       leftContainer.innerHTML = '';
       rightContainer.innerHTML = '';
 
-      if (activePairs.length === 0) {
-        activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
-      }
-      if (rightCardsOrder.length === 0) {
-        rightCardsOrder = shuffleArray(activePairs);
-      }
+      if (activePairs.length === 0) activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
+      if (rightCardsOrder.length === 0) rightCardsOrder = shuffleArray(activePairs);
 
-      // ЛЕВАЯ КОЛОНКА: Картинка на всю карточку + только время и сутки
       activePairs.forEach((item, index) => {
         const displayNum = String(index + 1).padStart(2, '0');
         const isMatched = matchedPairIds.includes(item.id);
@@ -815,36 +577,30 @@
 
         const card = document.createElement('div');
         card.id = `left-card-${item.id}`;
-        card.className = `
-          relative rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer pin-shadow border-4
-          ${isMatched 
-            ? 'border-emerald-500 opacity-90' 
-            : isSelected 
-              ? 'border-amber-400 card-selected ring-4 ring-amber-400/40' 
-              : 'border-amber-200/90 hover:border-amber-400'
-          }
-        `;
+        card.className = `relative rounded-2xl overflow-hidden transition-all duration-200 cursor-pointer pin-shadow border-2 sm:border-4 ${
+          isMatched ? 'border-emerald-500 opacity-90' : isSelected ? 'border-amber-400 card-selected ring-2 ring-amber-400/40' : 'border-amber-200/90 hover:border-amber-400'
+        }`;
         card.onclick = () => onSelectLeft(item.id, displayNum);
 
         card.innerHTML = `
           ${getCroppedRealImageHTML(item)}
-
-          <!-- Плашка поверх картинки: ТОЛЬКО время + время суток и номер карточки -->
-          <div class="absolute top-2.5 inset-x-2.5 flex items-center justify-between gap-2 pointer-events-none z-10">
-            <span class="inline-flex items-center px-3 py-1 rounded-full text-xs sm:text-sm font-black tracking-wide shadow-md backdrop-blur-md ${isMatched ? 'bg-emerald-600/95 text-white' : 'bg-slate-900/85 text-amber-300 border border-amber-400/40'}">
+          <div class="absolute top-2 inset-x-2 flex items-center justify-between gap-1 pointer-events-none z-10">
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-black shadow-md backdrop-blur-md ${isMatched ? 'bg-emerald-600/95 text-white' : 'bg-slate-900/85 text-amber-300 border border-amber-400/40'}">
               ${item.time}
             </span>
-
-            <span class="text-xs font-extrabold px-2.5 py-1 rounded-full shadow-md backdrop-blur-md ${isMatched ? 'bg-emerald-600/95 text-white' : 'bg-slate-900/80 text-white'}">
-              ${isMatched ? `🔗 Пара #${displayNum}` : `#${displayNum}`}
-            </span>
+            <div class="flex items-center gap-1 pointer-events-auto">
+              <button onclick="openZoomModal(${item.id}, event)" class="p-1 rounded-md bg-slate-900/80 hover:bg-slate-800 text-white text-[10px] shadow" title="Увеличить">
+                🔍
+              </button>
+              <span class="text-[10px] sm:text-xs font-extrabold px-1.5 py-0.5 rounded-full shadow-md backdrop-blur-md ${isMatched ? 'bg-emerald-600/95 text-white' : 'bg-slate-900/80 text-white'}">
+                #${displayNum}
+              </span>
+            </div>
           </div>
         `;
-
         leftContainer.appendChild(card);
       });
 
-      // ПРАВАЯ КОЛОНКА: Русские фразы (без SVG-иконок)
       rightCardsOrder.forEach((item) => {
         const isMatched = matchedPairIds.includes(item.id);
         const isSelected = selectedRightId === item.id;
@@ -852,67 +608,50 @@
 
         const card = document.createElement('div');
         card.id = `right-card-${item.id}`;
-        card.className = `
-          relative rounded-2xl p-4 sm:p-5 transition-all duration-200 cursor-pointer pin-shadow border-2
-          ${isMatched 
-            ? 'bg-emerald-950/60 border-emerald-500/80 text-emerald-100 opacity-95' 
-            : isSelected 
-              ? 'bg-sky-100 text-slate-900 border-sky-400 card-selected ring-4 ring-sky-400/30' 
-              : 'bg-sky-50/95 hover:bg-white text-slate-900 border-sky-200/90 hover:border-sky-400'
-          }
-        `;
+        card.className = `relative rounded-2xl p-3 sm:p-5 transition-all duration-200 cursor-pointer pin-shadow border-2 ${
+          isMatched ? 'bg-emerald-950/60 border-emerald-500/80 text-emerald-100 opacity-95' : isSelected ? 'bg-sky-100 text-slate-900 border-sky-400 card-selected ring-4 ring-sky-400/30' : 'bg-sky-50/95 hover:bg-white text-slate-900 border-sky-200/90 hover:border-sky-400'
+        }`;
         card.onclick = () => onSelectRight(item.id);
 
         card.innerHTML = `
           <div class="tape"></div>
-          
-          <div class="flex items-center justify-between gap-2 mb-3">
-            <span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[11px] sm:text-xs font-bold truncate max-w-[75%] ${isMatched ? 'bg-emerald-500/20 text-emerald-300' : 'bg-sky-600 text-white'}">
+          <div class="flex items-center justify-between gap-2 mb-2">
+            <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold truncate max-w-[75%] ${isMatched ? 'bg-emerald-500/20 text-emerald-300' : 'bg-sky-600 text-white'}">
               ${item.landmarkTag}
             </span>
-
-            <div class="flex items-center gap-1.5 shrink-0">
-              ${isMatched ? `<span class="text-[11px] sm:text-xs font-extrabold px-2 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">🔗 #${matchedIndex}</span>` : ''}
-              <button onclick="speakRussian('${item.ru.replace(/'/g, "\\'")}', event)" class="p-1.5 rounded-lg bg-white/90 hover:bg-sky-200 text-sky-900 font-bold text-sm shadow-sm transition active:scale-95" title="Послушать произношение">
+            <div class="flex items-center gap-1 shrink-0">
+              ${isMatched ? `<span class="text-[10px] font-extrabold px-1.5 py-0.5 rounded-full bg-emerald-500/30 text-emerald-200 border border-emerald-400/40">🔗 #${matchedIndex}</span>` : ''}
+              <button onclick="speakRussian('${item.ru.replace(/'/g, "\\'")}', event)" class="p-1 rounded-lg bg-white/90 hover:bg-sky-200 text-sky-900 text-xs shadow-sm transition active:scale-95" title="Послушать">
                 🔊
               </button>
             </div>
           </div>
-
-          <p class="text-sm sm:text-base lg:text-lg font-extrabold leading-snug tracking-tight break-words ${isMatched ? 'text-emerald-100' : 'text-slate-900'}">
+          <p class="text-xs sm:text-base lg:text-lg font-extrabold leading-snug tracking-tight break-words ${isMatched ? 'text-emerald-100' : 'text-slate-900'}">
             ${item.ru}
           </p>
-
-          <div class="mt-2.5 flex flex-wrap items-center gap-1.5">
-            <span class="text-[11px] sm:text-xs font-semibold ${isMatched ? 'text-emerald-300 bg-emerald-900/60' : 'text-slate-600 bg-slate-200/80'} px-2.5 py-0.5 rounded-md inline-block">
+          <div class="mt-2">
+            <span class="text-[10px] sm:text-xs font-semibold ${isMatched ? 'text-emerald-300 bg-emerald-900/60' : 'text-slate-600 bg-slate-200/80'} px-2 py-0.5 rounded-md inline-block">
               Глагол: ${item.grammar}
             </span>
           </div>
         `;
-
         rightContainer.appendChild(card);
       });
 
-      updateScoreText();
+      document.getElementById('score-counter').textContent = `${matchedPairIds.length} / ${activePairs.length}`;
       updateMobileSelectionBar();
       requestAnimationFrame(drawConnections);
     }
 
-    // Вспомогательные функции для мобильной навигации
     function scrollToColumn(side) {
       const targetId = side === 'left' ? 'left-column-section' : 'right-column-section';
       const el = document.getElementById(targetId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function jumpToOppositeColumn() {
-      if (selectedLeftId !== null) {
-        scrollToColumn('right');
-      } else if (selectedRightId !== null) {
-        scrollToColumn('left');
-      }
+      if (selectedLeftId !== null) scrollToColumn('right');
+      else if (selectedRightId !== null) scrollToColumn('left');
     }
 
     function clearSelection() {
@@ -948,7 +687,6 @@
       }
     }
 
-    // Выбор карточки с картинкой (левая колонка)
     function onSelectLeft(id, displayNum) {
       if (isLockedForAnimation || matchedPairIds.includes(id)) return;
       playAudioTone('click');
@@ -963,13 +701,12 @@
           evaluateMatch();
         } else {
           const num = displayNum || String(activePairs.findIndex(p => p.id === id) + 1).padStart(2, '0');
-          updateStatus(`Выбрана карточка #${num}. Теперь найдите подходящую русскую фразу! ➔`);
+          updateStatus(`Выбрана карточка #${num}. Теперь найдите подходящую фразу! ➔`);
           renderBoard();
         }
       }
     }
 
-    // Выбор карточки с русской фразой (правая колонка)
     function onSelectRight(id) {
       if (isLockedForAnimation || matchedPairIds.includes(id)) return;
       playAudioTone('click');
@@ -989,7 +726,6 @@
       }
     }
 
-    // Проверка совпадения выбранной картинки и русской фразы
     function evaluateMatch() {
       if (selectedLeftId === selectedRightId) {
         const matchedId = selectedLeftId;
@@ -999,7 +735,7 @@
         const item = activePairs.find(p => p.id === matchedId);
         if (item) {
           setTimeout(() => speakRussian(item.ru), 250);
-          updateStatus(`🎉 Верно! Карточка «${item.time}» соединена с русской фразой!`);
+          updateStatus(`🎉 Верно! Карточка «${item.time}» соединена!`);
         }
 
         selectedLeftId = null;
@@ -1016,7 +752,7 @@
         isLockedForAnimation = true;
         renderBoard();
         playAudioTone('error');
-        updateStatus("❌ Не совпадает! Проверьте время суток и действие на картинке.");
+        updateStatus("❌ Не совпадает! Проверьте время суток и действие.");
 
         const leftEl = document.getElementById(`left-card-${selectedLeftId}`);
         const rightEl = document.getElementById(`right-card-${selectedRightId}`);
@@ -1032,14 +768,11 @@
       }
     }
 
-    // Отрисовка кривых линий между соединёнными карточками
     function drawConnections() {
       const svg = document.getElementById('connection-layer');
       if (!svg) return;
 
-      const existingPaths = svg.querySelectorAll('.connection-path');
-      existingPaths.forEach(p => p.remove());
-
+      svg.querySelectorAll('.connection-path').forEach(p => p.remove());
       if (window.innerWidth < 768) return;
 
       const containerRect = svg.parentElement.getBoundingClientRect();
@@ -1083,10 +816,6 @@
       document.getElementById('selection-status').textContent = msg;
     }
 
-    function updateScoreText() {
-      document.getElementById('score-counter').textContent = `${matchedPairIds.length} / ${activePairs.length}`;
-    }
-
     function shuffleAndResetBoard() {
       matchedPairIds = [];
       selectedLeftId = null;
@@ -1094,13 +823,12 @@
       isLockedForAnimation = false;
       rightCardsOrder = shuffleArray(activePairs);
       playAudioTone('click');
-      updateStatus("🔄 Карточки справа перемешаны! Выберите любую карточку слева, чтобы начать.");
+      updateStatus("🔄 Карточки перемешаны! Начните сопоставление слева.");
       renderBoard();
     }
 
     function toggleGrammarModal() {
-      const modal = document.getElementById('grammar-modal');
-      modal.classList.toggle('hidden');
+      document.getElementById('grammar-modal').classList.toggle('hidden');
     }
 
     function toggleWinModal(show) {
@@ -1112,7 +840,6 @@
     window.addEventListener('resize', drawConnections);
     window.addEventListener('scroll', drawConnections);
 
-    // Инициализация при загрузке страницы сука работай
     window.onload = function () {
       activePairs = ALL_16_CARDS.filter(c => c.group === 'core8');
       rightCardsOrder = shuffleArray(activePairs);
